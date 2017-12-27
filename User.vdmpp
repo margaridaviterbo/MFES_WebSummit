@@ -1,0 +1,17 @@
+class User
+types
+	public UserName = seq1 of char;
+	public UserState = <Registered> | <Unregistered>;
+instance variables
+	public Name: UserName;
+	public Type: WebSummit`WSTicketType;
+	public State: UserState := <Unregistered>;
+operations
+	public User: UserName * WebSummit`WSTicketType ==> User
+	User(un, ut) == (
+		Name := un;
+		Type := ut;
+		return self
+	)
+	post State = <Unregistered>;
+end User

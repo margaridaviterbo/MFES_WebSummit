@@ -1,0 +1,6 @@
+class TestBase
+operations
+	protected AssertTrue: bool ==> ()
+  AssertTrue(cond) == return
+  pre cond;
+end TestBase

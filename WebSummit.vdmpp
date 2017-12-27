@@ -1,0 +1,84 @@
+class WebSummit
+types
+	public WSAccount = seq of Transaction;
+	public WSWaitingList = set of User`UserName;
+	public WSAttendees = map User`UserName to User;
+	public WSTicketType = <Company> | <Attendee> | <Volunteer>;
+	public WSTicketStock = map WSTicketType to nat;
+	public WSTicketPrice = map WSTicketType to nat;
+instance variables
+	private Account : WSAccount := [];
+	private WaitingList : WSWaitingList := {};
+	private Attendees : WSAttendees := { |-> };
+	private TicketStock : WSTicketStock;
+	private TicketPrice : WSTicketPrice;
+operations
+	-- Constructor
+	public WebSummit: WSTicketStock * WSTicketPrice ==> WebSummit
+	WebSummit(tickets, price) == (
+		TicketStock := tickets;
+		TicketPrice := price;
+		return self
+	);
+
+	-- Sell a ticket 
+	public SellTicket: User`UserName * WSTicketType ==> ()
+	SellTicket(name, ticket) == (
+		TicketStock(ticket) := TicketStock(ticket) - 1;
+		Account := [new Transaction(TicketPrice(ticket))] ^ Account;
+		Attendees := Attendees ++ { name |-> new User(name, ticket)};
+	)
+	pre not ticket = <Volunteer> and TicketStock(ticket) > 0
+	post card dom Attendees >= card dom Attendees~ and TicketStock(ticket) = TicketStock~(ticket) - 1 and len Account = len Account~ + 1;
+
+	-- Retrieve the account balance
+	public GetAccountBalance: () ==> int
+	GetAccountBalance() == (
+		return new Utils().SumSeq([t.Amount | t in seq Account]);
+	);
+	
+	-- Register an attendee
+	public RegisterAttendee: User`UserName ==> ()
+	RegisterAttendee(name) == (
+		Attendees(name).State := <Registered>
+	)
+	pre Attendees(name).Type = <Attendee> and Attendees(name).State = <Unregistered>
+	post Attendees(name).Type = <Attendee> and Attendees(name).State = <Registered>;
+	
+	-- Add a potential volunteer to the waiting list
+	public AddToWaitingList: User`UserName ==> ()
+	AddToWaitingList(name) == (
+		 WaitingList := WaitingList union { name }
+	)
+	pre name not in set dom Attendees
+	post card WaitingList >= card WaitingList~;
+	
+	-- Accept a volunteer from the waiting list
+	public AcceptVolunteer: User`UserName ==> ()
+	AcceptVolunteer(name) == (
+		Attendees := Attendees ++ { name |-> new User(name, <Volunteer>)}
+	)
+	pre name in set WaitingList and name not in set dom Attendees
+	post name in set dom Attendees;
+	
+	-- Register a volunteer
+	public RegisterVolunteer: User`UserName ==> ()
+	RegisterVolunteer(name) == (
+		Attendees(name).State := <Registered>
+	)
+	pre Attendees(name).Type = <Volunteer> and Attendees(name).State = <Unregistered>
+	post Attendees(name).Type = <Volunteer> and Attendees(name).State = <Registered>;
+	
+	-- Get the total number of ticket holders (volunteers included)
+	public GetNumberOfAttendees: () ==> nat
+	GetNumberOfAttendees() == return card dom Attendees
+	post RESULT = card dom Attendees;
+	
+	-- Get the actual total number of attendees (volunteers included)
+	public GetNumberOfRegisteredAttendees: () ==> nat
+	GetNumberOfRegisteredAttendees() == (
+		return card dom { name |-> user | name in set dom Attendees, user in set rng Attendees & user.State = <Registered> }
+	)
+	post RESULT = card dom { name |-> user | name in set dom Attendees, user in set rng Attendees & user.State = <Registered> };
+	
+end WebSummit

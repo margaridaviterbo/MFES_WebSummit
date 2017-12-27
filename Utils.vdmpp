@@ -1,0 +1,8 @@
+class Utils
+operations
+	public SumSeq: seq of int ==> int
+	SumSeq(s) == (
+		if s = [] then return 0;
+		return hd s + SumSeq(tl s); 
+	)
+end Utils

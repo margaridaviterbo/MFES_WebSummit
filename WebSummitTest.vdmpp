@@ -1,0 +1,21 @@
+class WebSummitTest is subclass of TestBase
+instance variables
+	private TicketStock : WebSummit`WSTicketStock := { <Company> |-> 100, <Attendee> |-> 1000, <Volunteer> |-> 200 };
+	private TicketPrice : WebSummit`WSTicketPrice := { <Company> |-> 500, <Attendee> |-> 250 };
+	private WebSummit : WebSummit := new WebSummit(TicketStock, TicketPrice);
+operations
+	public TestSellTicket: () ==> ()
+	TestSellTicket() == (
+		WebSummit.SellTicket("João Silva", <Attendee>);
+		AssertTrue(WebSummit.GetNumberOfAttendees() = 1);
+		AssertTrue(WebSummit.GetAccountBalance() = TicketPrice(<Attendee>));
+		WebSummit.SellTicket("Margarida Viterbo", <Company>);
+		AssertTrue(WebSummit.GetNumberOfAttendees() = 2);
+		AssertTrue(WebSummit.GetAccountBalance() = TicketPrice(<Attendee>) + TicketPrice(<Company>));
+	);
+
+	public Run: () ==> ()
+	Run() == (
+		TestSellTicket();
+	);
+end WebSummitTest

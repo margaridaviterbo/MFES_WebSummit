@@ -1,0 +1,10 @@
+class Transaction
+instance variables
+	public Amount : int
+operations
+	public Transaction: int ==> Transaction
+	Transaction(amount) == (
+		Amount := amount;
+		return self
+	);
+end Transaction
