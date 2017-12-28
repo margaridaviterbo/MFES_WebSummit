@@ -4,7 +4,7 @@ types
   --public ConfSchedule = map Talk to Date;
   --public ConfVenue = one Venue;
 instance variables
-  private Name: ConfName;
+  public Name: ConfName;
   --private Schedule: ConfSchedule;
   --private Venue: ConfVenue;
 operations

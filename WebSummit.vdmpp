@@ -14,7 +14,7 @@ instance variables
 	public Attendees : WSAttendees := { |-> };
 	private TicketStock : WSTicketStock;
 	private TicketPrice : WSTicketPrice;
-	private Conferences : WSConf := {};
+	public Conferences : WSConf := {};
 operations
 	-- Constructor
 	public WebSummit: WSTicketStock * WSTicketPrice ==> WebSummit
@@ -85,9 +85,9 @@ operations
 	
 	public AddConference: WSConfName ==> ()
 	AddConference(confName) == (
-	  Conferences := Conferences ++ {new Conference(confName)}
+	  Conferences := Conferences union {new Conference(confName)}
 	)
-	pre not confName in set Conferences.Name
-	post confName in set Conferences.Name;
+	pre card { conf | conf in set Conferences & conf.Name = confName } = 0
+	post card { conf | conf in set Conferences & conf.Name = confName } = 1;
 	
 end WebSummit
