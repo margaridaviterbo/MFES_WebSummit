@@ -1,0 +1,30 @@
+class Conference
+types
+  public ConfName = seq1 of char;
+  --public ConfSchedule = map Talk to Date;
+  --public ConfVenue = one Venue;
+instance variables
+  public Name: ConfName;
+  --private Schedule: ConfSchedule;
+  --private Venue: ConfVenue;
+operations
+  public Conference: ConfName ==> Conference
+  Conference(name) == (
+    Name := name;
+    return self
+  );
+  
+  --public SetVenue: ConfVenue ==> ()
+  --SetVenue(venue) == (
+  --  Venue := venue;
+  --)
+  --pre venue in set WebSummit.Venues
+  --post Venue = venue;
+  
+  --public AddTalk: Talk*Date ==> ()
+  --AddTalk(talk, date) == (
+  --  Schedule := Schedule ++ { talk |-> date };
+  --)
+  --pre not date in set rng Schedule and not talk in set dom Schedule
+  --post Schedule = Schedule~ ++ { talk |-> date };
+end Conference

@@ -39,6 +39,13 @@ operations
     AssertTrue(WebSummit.GetNumberOfRegisteredAttendees() = 2);
     AssertTrue(WebSummit.Attendees("Joana Viterbo").State = <Registered>);
   );
+  
+  public TestAddConference: () ==> ()
+  TestAddConference() == (
+    WebSummit.AddConference("MoneyConf");
+    WebSummit.AddConference("Future Cities");
+    AssertTrue(card WebSummit.Conferences = 2);
+  );
 
 	public Run: () ==> ()
 	Run() == (
@@ -47,5 +54,6 @@ operations
 		TestAddToWaitingList();
 		TestAcceptVolunteer();
 		TestRegisterVolunteer();
+		TestAddConference();
 	);
 end WebSummitTest
