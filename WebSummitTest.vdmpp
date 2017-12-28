@@ -13,9 +13,39 @@ operations
 		AssertTrue(WebSummit.GetNumberOfAttendees() = 2);
 		AssertTrue(WebSummit.GetAccountBalance() = TicketPrice(<Attendee>) + TicketPrice(<Company>));
 	);
+	
+	public TestRegisterAttendee: () ==> ()
+	TestRegisterAttendee() == (
+		WebSummit.RegisterAttendee("João Silva");
+		AssertTrue(WebSummit.GetNumberOfRegisteredAttendees() = 1);
+		AssertTrue(WebSummit.Attendees("João Silva").State = <Registered>);
+	);
+
+	public TestAddToWaitingList: () ==> ()
+	TestAddToWaitingList() == (
+		WebSummit.AddToWaitingList("Joana Viterbo");
+		AssertTrue(card WebSummit.WaitingList = 1);
+	);
+	
+	public TestAcceptVolunteer: () ==> ()
+	TestAcceptVolunteer() == (
+	  WebSummit.AcceptVolunteer("Joana Viterbo");
+	  AssertTrue(WebSummit.GetNumberOfAttendees() = 3);  
+	);
+	
+	public TestRegisterVolunteer: () ==> ()
+  TestRegisterVolunteer() == (
+    WebSummit.RegisterVolunteer("Joana Viterbo");
+    AssertTrue(WebSummit.GetNumberOfRegisteredAttendees() = 2);
+    AssertTrue(WebSummit.Attendees("Joana Viterbo").State = <Registered>);
+  );
 
 	public Run: () ==> ()
 	Run() == (
 		TestSellTicket();
+		TestRegisterAttendee();
+		TestAddToWaitingList();
+		TestAcceptVolunteer();
+		TestRegisterVolunteer();
 	);
 end WebSummitTest

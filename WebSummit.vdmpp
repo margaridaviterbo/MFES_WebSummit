@@ -8,8 +8,8 @@ types
 	public WSTicketPrice = map WSTicketType to nat;
 instance variables
 	private Account : WSAccount := [];
-	private WaitingList : WSWaitingList := {};
-	private Attendees : WSAttendees := { |-> };
+	public WaitingList : WSWaitingList := {};
+	public Attendees : WSAttendees := { |-> };
 	private TicketStock : WSTicketStock;
 	private TicketPrice : WSTicketPrice;
 operations
@@ -76,9 +76,8 @@ operations
 	
 	-- Get the actual total number of attendees (volunteers included)
 	public GetNumberOfRegisteredAttendees: () ==> nat
-	GetNumberOfRegisteredAttendees() == (
-		return card dom { name |-> user | name in set dom Attendees, user in set rng Attendees & user.State = <Registered> }
-	)
-	post RESULT = card dom { name |-> user | name in set dom Attendees, user in set rng Attendees & user.State = <Registered> };
+	GetNumberOfRegisteredAttendees() == 
+		return card { user |  user in set rng Attendees & user.State = <Registered> }
+	post RESULT = card { user | user in set rng Attendees & user.State = <Registered>};
 	
 end WebSummit
