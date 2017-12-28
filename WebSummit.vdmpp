@@ -6,12 +6,15 @@ types
 	public WSTicketType = <Company> | <Attendee> | <Volunteer>;
 	public WSTicketStock = map WSTicketType to nat;
 	public WSTicketPrice = map WSTicketType to nat;
+	public WSConf = set of Conference;
+	public WSConfName = seq1 of char;
 instance variables
 	private Account : WSAccount := [];
 	public WaitingList : WSWaitingList := {};
 	public Attendees : WSAttendees := { |-> };
 	private TicketStock : WSTicketStock;
 	private TicketPrice : WSTicketPrice;
+	private Conferences : WSConf := {};
 operations
 	-- Constructor
 	public WebSummit: WSTicketStock * WSTicketPrice ==> WebSummit
@@ -79,5 +82,12 @@ operations
 	GetNumberOfRegisteredAttendees() == 
 		return card { user |  user in set rng Attendees & user.State = <Registered> }
 	post RESULT = card { user | user in set rng Attendees & user.State = <Registered>};
+	
+	public AddConference: WSConfName ==> ()
+	AddConference(confName) == (
+	  Conferences := Conferences ++ {new Conference(confName)}
+	)
+	pre not confName in set Conferences.Name
+	post confName in set Conferences.Name;
 	
 end WebSummit
