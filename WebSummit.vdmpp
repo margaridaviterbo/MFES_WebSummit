@@ -9,7 +9,11 @@ types
 	public WSVenues = map Venue`VenueName to Venue;
 	public WSConferences = map Conference`ConfName to Conference;
 	public WSTalks = map Talk`TalkTitle to Talk;
+<<<<<<< HEAD
 	public WSWorkshops = map Workshop`WorkshopName to Workshop;
+=======
+	public WSNews = map News`NewsTitle to News;
+>>>>>>> master
 instance variables
 	private Account : WSAccount := [];
 	public WaitingList : WSWaitingList := {};
@@ -20,6 +24,7 @@ instance variables
 	public Workshops : WSWorkshops := { |-> };
 	public Venues : WSVenues := { |-> };
 	public Talks : WSTalks := { |-> };
+	public News : WSNews := { |-> };
 operations
 	-- Constructor
 	public WebSummit: WSTicketStock * WSTicketPrice ==> WebSummit
@@ -189,4 +194,47 @@ operations
 	
 	--TODO(PRINCESA) Register attendee to one workshop 
 	
+	-- Publish a news arcticle about the event
+	public PublishNewsArcticle: User`UserName * News`NewsTitle * News`NewsContent ==> ()
+	PublishNewsArcticle(author, title, content) == (
+		News := News ++ { title |-> new News(author, title, content) }
+	)
+	pre (
+		author in set dom Attendees
+		and title not in set dom News
+	)
+	post title in set dom News and card dom News > card dom News~;
+	
+	-- Publish a news arcticle about a conference
+	public PublishNewsArcticleAboutConf: User`UserName * News`NewsTitle * News`NewsContent * Conference`ConfName ==> ()
+	PublishNewsArcticleAboutConf(author, title, content, conf) == (
+		News := News ++ { title |-> new News(author, title, content, conf) } 
+	)
+	pre (
+		author in set dom Attendees
+		and conf in set dom Conferences
+		and title not in set dom News
+	)
+	post title in set dom News and card dom News > card dom News~;
+	
+	-- Retrieve all news arcticles 
+	public GetAllNews: () ==> set of News
+	GetAllNews() == (
+		return rng News;
+	)
+	post News = News~;
+	
+	-- Retrieve all news arcticles about a specific conference
+	public GetNewsAboutConf: Conference`ConfName ==> set of News
+	GetNewsAboutConf(conf) == (
+		return { news | news in set rng News & news.Conference = conf }; 
+	)
+	post News = News~;
+	
+	-- Retrieve all news arcticles written by a specific author
+	public GetNewsByAuthor: User`UserName ==> set of News
+	GetNewsByAuthor(author) == (
+		return { news | news in set rng News & news.Author = author };
+	)
+	post News = News~;
 end WebSummit
