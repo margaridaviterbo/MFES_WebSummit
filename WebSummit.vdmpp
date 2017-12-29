@@ -9,11 +9,8 @@ types
 	public WSVenues = map Venue`VenueName to Venue;
 	public WSConferences = map Conference`ConfName to Conference;
 	public WSTalks = map Talk`TalkTitle to Talk;
-<<<<<<< HEAD
 	public WSWorkshops = map Workshop`WorkshopName to Workshop;
-=======
 	public WSNews = map News`NewsTitle to News;
->>>>>>> master
 instance variables
 	private Account : WSAccount := [];
 	public WaitingList : WSWaitingList := {};
