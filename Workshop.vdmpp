@@ -1,0 +1,34 @@
+class Workshop
+types
+  public WorkshopName = seq1 of char;
+  public WorkshopSubject = seq1 of char;
+  public WorkshopCompany = seq1 of char;
+instance variables
+  public Name: WorkshopName;
+  public Subject: WorkshopSubject;
+  public Venue: Venue`VenueName;
+  public Company: WorkshopCompany;
+  public Date: Date;
+  public Start: Time;
+  public End: Time;
+  public Vacancies: nat;
+operations
+  public Workshop: WorkshopName * WorkshopSubject * Venue`VenueName * WorkshopCompany * Date * Time * Time * nat ==> Workshop
+  Workshop(name, subject, venue, company, date, startTime, endTime, vacancies) == (
+    Name := name;
+    Subject := subject;
+    Venue := venue;
+    Company := company;
+    Date := date;
+    Start := startTime;
+    End := endTime;
+    Vacancies := vacancies;
+    return self
+  )
+  pre (
+    startTime.IsEarlierThan(endTime)
+    and endTime.IsLaterThan(startTime)
+    and vacancies > 0
+  );
+
+end Workshop
