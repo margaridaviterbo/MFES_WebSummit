@@ -9,6 +9,7 @@ types
 	public WSVenues = map Venue`VenueName to Venue;
 	public WSConferences = map Conference`ConfName to Conference;
 	public WSTalks = map Talk`TalkTitle to Talk;
+	public WSWorkshops = map Workshop`WorkshopName to Workshop;
 instance variables
 	private Account : WSAccount := [];
 	public WaitingList : WSWaitingList := {};
@@ -16,6 +17,7 @@ instance variables
 	private TicketStock : WSTicketStock;
 	private TicketPrice : WSTicketPrice;
 	public Conferences : WSConferences := { |-> };
+	public Workshops : WSWorkshops := { |-> };
 	public Venues : WSVenues := { |-> };
 	public Talks : WSTalks := { |-> };
 operations
@@ -171,5 +173,20 @@ operations
 		return Venues(Conferences(conf).Venue);
 	)
 	pre conf in set dom Conferences;
+	
+	-- Schedule a workshop
+	public ScheduleWorkshop: Workshop`WorkshopName * Workshop`WorkshopSubject * Venue`VenueName * Workshop`WorkshopCompany * Date * Time * Time * nat ==> ()
+	ScheduleWorkshop(name, subject, venue, company, date, startTime, endTime, vacancies) == (
+	   Workshops := Workshops ++ { name |-> new Workshop(name, subject, venue, company, date, startTime, endTime, vacancies) }
+	)
+	pre (
+	 name not in set dom Workshops
+	 and venue in set dom Venues
+	 and date.IsLaterThan(Venues(venue).Start)
+	 and date.IsEarlierThan(Venues(venue).End)
+	)
+	post name in set dom Workshops and card dom Workshops > card dom Workshops~;
+	
+	--TODO(PRINCESA) Register attendee to one workshop 
 	
 end WebSummit
