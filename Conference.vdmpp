@@ -1,16 +1,16 @@
 class Conference
 types
   public ConfName = seq1 of char;
-  public ConfTalks = map Talk`TalkTitle to Talk;
 instance variables
   public Name: ConfName;
+  public Venue: Venue`VenueName;
   public Start: Date;
   public End: Date;
-  public Talks: ConfTalks := { |-> };
 operations
-  public Conference: ConfName * Date * Date ==> Conference
-  Conference(name, startDate, endDate) == (
+  public Conference: ConfName * Venue`VenueName * Date * Date ==> Conference
+  Conference(name, venue, startDate, endDate) == (
     Name := name;
+    Venue := venue;
     Start := startDate;
     End := endDate;
     return self
@@ -20,28 +20,15 @@ operations
   	and endDate.IsLaterThan(startDate)
   );
   
-  --public AddTalk: Talk*Date ==> ()
-  --AddTalk(talk, date) == (
-  --  Schedule := Schedule ++ { talk |-> date };
-  --)
-  --pre not date in set rng Schedule and not talk in set dom Schedule
-  --post Schedule = Schedule~ ++ { talk |-> date };
-  
-  public ScheduleTalk: Talk ==> ()
-  ScheduleTalk(talk) == (
-  	Talks := Talks ++ { talk.Title |-> talk };
-  )
-  pre (
-  	talk.Date.IsLaterThan(Start)
-  	and talk.Date.IsEarlierThan(End)
-  	and IsFree(talk.Start, talk.End)
-  );
-  
-  pure public IsFree: Time * Time ==> bool
-	IsFree(fromTime, toTime) == (
-		for all talk in set rng Talks do
-			if Time`DoOverlap(fromTime, toTime, talk.Start, talk.End) then
-				return false;
+  pure public IsFree: Date * Time * Time * WebSummit`WSTalks ==> bool
+	IsFree(date, fromTime, toTime, talks) == (
+		for all talk in set rng talks do
+			if ( 
+				talk.Conference = Name 
+				and date.Equals(talk.Date) 
+				and Time`DoOverlap(fromTime, toTime, talk.Start, talk.End) 
+			) 
+			then return false;
 		return true;
 	);
 end Conference

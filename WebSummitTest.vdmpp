@@ -53,16 +53,29 @@ operations
   );
   
   -- Test scheduling a conference for the event
-  public TestScheduleConference: 
-  () ==> ()
+  public TestScheduleConference: () ==> ()
   TestScheduleConference() == (
   	WebSummit.ScheduleConference("FIL 1", "Future Societies", new Date(4,11,2017), new Date(5,11,2017));
-  	AssertTrue(card dom WebSummit.Venues("FIL 1").Conferences = 1);
+  	AssertTrue(card dom WebSummit.Conferences = 1);
+  	AssertTrue(WebSummit.Conferences("Future Societies").Venue = "FIL 1");
   	WebSummit.ScheduleConference("FIL 1", "Money Conf", new Date(6,11,2017), new Date(7,11,2017));
+  	AssertTrue(card dom WebSummit.Conferences = 2);
+  	AssertTrue(WebSummit.Conferences("Money Conf").Venue = "FIL 1");
   );
   
-  -- TODO(jp): Test scheduling a talk for a conference
-
+  -- Test scheduling a talk for a conference
+  public TestScheduleTalk: () ==> ()
+  TestScheduleTalk() == (
+  	WebSummit.ScheduleTalk("Future Societies", "The City of the Future", 
+  		"João Silva", new Date(4,11,2017), new Time(16,40), new Time(17,00));
+  	AssertTrue(card dom WebSummit.Talks = 1);
+  	AssertTrue(WebSummit.Talks("The City of the Future").Conference = "Future Societies");
+  	WebSummit.ScheduleTalk("Future Societies", "Electric Cars: The Future",
+  		"Margarida Viterbo", new Date(4,11,2017), new Time(17,05), new Time(17,25));
+  	AssertTrue(card dom WebSummit.Talks = 2);
+  	AssertTrue(WebSummit.Talks("Electric Cars: The Future").Conference = "Future Societies");
+  );
+  
 	public Run: () ==> ()
 	Run() == (
 		TestSellTicket();
@@ -72,6 +85,7 @@ operations
 		TestRegisterVolunteer();
 		TestScheduleVenue();
 		TestScheduleConference();
+		TestScheduleTalk();
 	);
 	
 	-- Failing tests; run one at a time --
@@ -95,5 +109,19 @@ operations
 		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017));
 		WebSummit.ScheduleConference("MEO Arena", "Future Societies", new Date(4,11,2017), new Date(5,11,2017));
 		WebSummit.ScheduleConference("MEO Arena", "Panda Conf", new Date(5,11,2017), new Date(6,11,2017));
+	);
+	
+	-- Trying to schedule two talks at the same time for one conference
+	public TestScheduleOverlappingTalks: () ==> ()
+	TestScheduleOverlappingTalks() == (
+		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017));
+		WebSummit.ScheduleConference("MEO Arena", "Future Societies", new Date(4,11,2017), new Date(5,11,2017));
+		AssertTrue(WebSummit.Conferences("Future Societies").Venue = "MEO Arena");
+		WebSummit.SellTicket("João Silva", <Attendee>);
+		WebSummit.SellTicket("Margarida Viterbo", <Attendee>);
+		WebSummit.ScheduleTalk("Future Societies", "The City of the Future", 
+  		"João Silva", new Date(4,11,2017), new Time(16,40), new Time(17,00));
+  	WebSummit.ScheduleTalk("Future Societies", "Electric Cars: The Future",
+  		"Margarida Viterbo", new Date(4,11,2017), new Time(16,55), new Time(17,15));
 	);
 end WebSummitTest

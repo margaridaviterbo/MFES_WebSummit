@@ -7,15 +7,17 @@ types
 	public WSTicketStock = map WSTicketType to nat;
 	public WSTicketPrice = map WSTicketType to nat;
 	public WSVenues = map Venue`VenueName to Venue;
-	
+	public WSConferences = map Conference`ConfName to Conference;
+	public WSTalks = map Talk`TalkTitle to Talk;
 instance variables
 	private Account : WSAccount := [];
 	public WaitingList : WSWaitingList := {};
 	public Attendees : WSAttendees := { |-> };
 	private TicketStock : WSTicketStock;
 	private TicketPrice : WSTicketPrice;
-	public Conferences : set of Conference := {};
-	public Venues : WSVenues := { |-> }
+	public Conferences : WSConferences := { |-> };
+	public Venues : WSVenues := { |-> };
+	public Talks : WSTalks := { |-> };
 operations
 	-- Constructor
 	public WebSummit: WSTicketStock * WSTicketPrice ==> WebSummit
@@ -92,8 +94,9 @@ operations
 	post RESULT = card { user | user in set rng Attendees & user.State = <Registered>};
 	
 	-- Schedule a venue for the event
-	public ScheduleVenue: Venue`VenueName * Date * Date ==> ()
-	ScheduleVenue(name, startDate, endDate) == (
+	public ScheduleVenue: Venue`VenueName * Date * Date * nat ==> ()
+	ScheduleVenue(name, startDate, endDate, rent) == (
+		Account := [new Transaction(-rent)] ^ Account;
 		Venues := Venues ++ { name |-> new Venue(name, startDate, endDate) };
 	)
 	post name in set dom Venues and card dom Venues >= card dom Venues~;
@@ -101,8 +104,72 @@ operations
 	-- Schedule a conference 
 	public ScheduleConference: Venue`VenueName * Conference`ConfName * Date * Date ==> ()
 	ScheduleConference(venue, conf, startDate, endDate) == (
-		Venues(venue).ScheduleConference(conf, startDate, endDate);
+		Conferences := Conferences ++ { conf |-> new Conference(conf, venue, startDate, endDate) }
 	)
-	pre venue in set dom Venues
-	post conf in set dom Venues(venue).Conferences;
+	pre (
+		venue in set dom Venues
+		and startDate.IsLaterThan(Venues(venue).Start)
+		and endDate.IsEarlierThan(Venues(venue).End)
+		and Venues(venue).IsFree(startDate, endDate, Conferences)
+	)
+	post conf in set dom Conferences;
+	
+	-- Schedule a talk
+	public ScheduleTalk: Conference`ConfName * Talk`TalkTitle * User`UserName * Date * Time * Time ==> ()
+	ScheduleTalk(conf, title, speaker, date, startTime, endTime) == (
+		Talks := Talks ++ { title |-> new Talk(title, conf, speaker, date, startTime, endTime) };
+	)
+	pre (
+		conf in set dom Conferences
+		and speaker in set dom Attendees
+		and date.IsLaterThan(Conferences(conf).Start)
+		and date.IsEarlierThan(Conferences(conf).End)
+		and Conferences(conf).IsFree(date, startTime, endTime, Talks)
+	)
+	post (
+		title in set dom Talks
+	);
+	
+	-- Retrieve all the talks from a specific day
+	public GetTalksOfDay: Date ==> set of Talk
+	GetTalksOfDay(date) == (
+		return { talk | talk in set rng Talks & talk.Date.Equals(date) };
+	)
+	post Talks = Talks~;
+	
+	-- Retrieve all the talks happening at a specific hour of a day
+	public GetTalksAtTime: Date * Time ==> set of Talk
+	GetTalksAtTime(date, time) == (
+		return { talk | talk in set rng Talks & talk.Date.Equals(date) and time.IsLaterThan(talk.Start) and time.IsEarlierThan(talk.End) }
+	)
+	post Talks = Talks~;
+	
+	-- Retrieve all the talks given by a speaker
+	public GetTalksOfSpeaker: User`UserName ==> set of Talk
+	GetTalksOfSpeaker(speaker) == (
+		return { talk | talk in set rng Talks & talk.Speaker = speaker };
+	)
+	post Talks = Talks~;
+	
+	-- Retrieve all the talks from a specific conference for a specific day
+	public GetConferenceTalksOfDay: Conference`ConfName * Date ==> set of Talk
+	GetConferenceTalksOfDay(conference, date) == (
+		return { talk | talk in set rng Talks & talk.Conference = conference and talk.Date.Equals(date) }
+	)
+	post Talks = Talks~;
+	
+	-- Retrieve all the conferences of a day
+	public GetConferencesOfDay: Date ==> set of Conference
+	GetConferencesOfDay(date) == (
+		return { conf | conf in set rng Conferences & date.IsLaterThan(conf.Start) and date.IsEarlierThan(conf.End) }
+	)
+	post Conferences = Conferences~;
+	
+	-- Retrieve venue where conference is taking place
+	public GetConferenceVenue: Conference`ConfName ==> Venue
+	GetConferenceVenue(conf) == (
+		return Venues(Conferences(conf).Venue);
+	)
+	pre conf in set dom Conferences;
+	
 end WebSummit

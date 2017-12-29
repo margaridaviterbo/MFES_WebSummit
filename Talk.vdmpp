@@ -3,14 +3,16 @@ types
 	public TalkTitle = seq1 of char;
 instance variables
 	public Title: TalkTitle;
+	public Conference: Conference`ConfName;
 	public Speaker: User`UserName;
 	public Date: Date;
 	public Start: Time;
 	public End: Time; 
 operations
-	public Talk: TalkTitle * User`UserName * Date * Time * Time ==> Talk
-	Talk(title, speaker, date, startTime, endTime) == (
+	public Talk: TalkTitle * Conference`ConfName * User`UserName * Date * Time * Time ==> Talk
+	Talk(title, conf, speaker, date, startTime, endTime) == (
 		Title := title;
+		Conference := conf;
 		Speaker := speaker;
 		Date := date;
 		Start := startTime;

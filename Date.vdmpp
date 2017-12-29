@@ -39,4 +39,13 @@ operations
 		start1.IsEarlierThan(end1) 
 		and start2.IsEarlierThan(end2)
 	);
+	
+	pure public Equals: Date ==> bool
+	Equals(other) == (
+		return (
+			Year = other.Year
+			and Month = other.Month
+			and Day = other.Day
+		);
+	);
 end Date
