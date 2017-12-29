@@ -4,6 +4,7 @@ instance variables
 	private TicketPrice : WebSummit`WSTicketPrice := { <Company> |-> 500, <Attendee> |-> 250 };
 	private WebSummit : WebSummit := new WebSummit(TicketStock, TicketPrice);
 operations
+	-- Test selling a ticket
 	public TestSellTicket: () ==> ()
 	TestSellTicket() == (
 		WebSummit.SellTicket("João Silva", <Attendee>);
@@ -14,6 +15,7 @@ operations
 		AssertTrue(WebSummit.GetAccountBalance() = TicketPrice(<Attendee>) + TicketPrice(<Company>));
 	);
 	
+	-- Test registering an attendee
 	public TestRegisterAttendee: () ==> ()
 	TestRegisterAttendee() == (
 		WebSummit.RegisterAttendee("João Silva");
@@ -21,18 +23,21 @@ operations
 		AssertTrue(WebSummit.Attendees("João Silva").State = <Registered>);
 	);
 
+	-- Test adding a volunteer to the waiting list
 	public TestAddToWaitingList: () ==> ()
 	TestAddToWaitingList() == (
 		WebSummit.AddToWaitingList("Joana Viterbo");
 		AssertTrue(card WebSummit.WaitingList = 1);
 	);
 	
+	-- Test accepting a volunteer
 	public TestAcceptVolunteer: () ==> ()
 	TestAcceptVolunteer() == (
 	  WebSummit.AcceptVolunteer("Joana Viterbo");
 	  AssertTrue(WebSummit.GetNumberOfAttendees() = 3);  
-	);
+	); 
 	
+	-- Test registering a volunteer
 	public TestRegisterVolunteer: () ==> ()
   TestRegisterVolunteer() == (
     WebSummit.RegisterVolunteer("Joana Viterbo");
@@ -40,12 +45,23 @@ operations
     AssertTrue(WebSummit.Attendees("Joana Viterbo").State = <Registered>);
   );
   
-  public TestAddConference: () ==> ()
-  TestAddConference() == (
-    WebSummit.AddConference("MoneyConf");
-    WebSummit.AddConference("Future Cities");
-    AssertTrue(card WebSummit.Conferences = 2);
+  -- Test scheduling a venue for the event
+  public TestScheduleVenue: () ==> ()
+  TestScheduleVenue() == (
+  	WebSummit.ScheduleVenue("FIL 1", new Date(4,11,2017), new Date(9,11,2017));
+  	AssertTrue(card dom WebSummit.Venues = 1);
   );
+  
+  -- Test scheduling a conference for the event
+  public TestScheduleConference: 
+  () ==> ()
+  TestScheduleConference() == (
+  	WebSummit.ScheduleConference("FIL 1", "Future Societies", new Date(4,11,2017), new Date(5,11,2017));
+  	AssertTrue(card dom WebSummit.Venues("FIL 1").Conferences = 1);
+  	WebSummit.ScheduleConference("FIL 1", "Money Conf", new Date(6,11,2017), new Date(7,11,2017));
+  );
+  
+  -- TODO(jp): Test scheduling a talk for a conference
 
 	public Run: () ==> ()
 	Run() == (
@@ -54,6 +70,30 @@ operations
 		TestAddToWaitingList();
 		TestAcceptVolunteer();
 		TestRegisterVolunteer();
-		TestAddConference();
+		TestScheduleVenue();
+		TestScheduleConference();
+	);
+	
+	-- Failing tests; run one at a time --
+	
+	-- Trying to schedule a venue with bad dates
+	public TestScheduleVenueBadDates: () ==> ()
+	TestScheduleVenueBadDates() == (
+		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(3,11,2017));
+	);
+	
+	-- Trying to schedule a conference with bad dates
+	public TestScheduleConferenceBadDates: () ==> ()
+	TestScheduleConferenceBadDates() == (
+		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017));
+		WebSummit.ScheduleConference("MEO Arena", "Panda Conf", new Date(4,11, 2016), new Date(5,11,2016));
+	);
+	
+	-- Trying to schedule two conferences for the same venue at the same time
+	public TestScheduleOverlappingConferences: () ==> ()
+	TestScheduleOverlappingConferences() == (
+		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017));
+		WebSummit.ScheduleConference("MEO Arena", "Future Societies", new Date(4,11,2017), new Date(5,11,2017));
+		WebSummit.ScheduleConference("MEO Arena", "Panda Conf", new Date(5,11,2017), new Date(6,11,2017));
 	);
 end WebSummitTest

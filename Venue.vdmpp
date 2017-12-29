@@ -1,0 +1,44 @@
+class Venue
+types
+	public VenueName = seq1 of char;
+	public VenueConf = map Conference`ConfName to Conference; 
+instance variables
+	public Name : VenueName;
+	public Conferences : VenueConf := { |-> };
+	public Start : Date;
+	public End : Date;
+operations
+	public Venue: VenueName * Date * Date ==> Venue
+	Venue(name, startDate, endDate) == (
+		Name := name;
+		Start := startDate;
+		End := endDate;
+		return self;
+	)
+	pre ( 
+		startDate.IsEarlierThan(endDate)
+		and endDate.IsLaterThan(startDate)
+	); 
+	
+	public ScheduleConference: Conference`ConfName * Date * Date ==> ()
+	ScheduleConference(conf, startDate, endDate) == (
+		Conferences := { conf |-> new Conference(conf, startDate, endDate) }
+	)
+	pre (
+		startDate.IsLaterThan(Start)
+		and endDate.IsEarlierThan(End)
+		and IsFree(startDate, endDate)
+	)
+	post ( 
+		conf in set dom Conferences
+		and card dom Conferences >= card dom Conferences~
+	);
+	
+	pure public IsFree: Date * Date ==> bool
+	IsFree(fromDate, toDate) == (
+		for all conference in set rng Conferences do
+			if Date`DoOverlap(fromDate, toDate, conference.Start, conference.End) then
+				return false;
+		return true;
+	);
+end Venue

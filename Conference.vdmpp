@@ -1,25 +1,24 @@
 class Conference
 types
   public ConfName = seq1 of char;
-  --public ConfSchedule = map Talk to Date;
-  --public ConfVenue = one Venue;
+  public ConfTalks = map Talk`TalkTitle to Talk;
 instance variables
   public Name: ConfName;
-  --private Schedule: ConfSchedule;
-  --private Venue: ConfVenue;
+  public Start: Date;
+  public End: Date;
+  public Talks: ConfTalks := { |-> };
 operations
-  public Conference: ConfName ==> Conference
-  Conference(name) == (
+  public Conference: ConfName * Date * Date ==> Conference
+  Conference(name, startDate, endDate) == (
     Name := name;
+    Start := startDate;
+    End := endDate;
     return self
+  )
+  pre (
+  	startDate.IsEarlierThan(endDate)
+  	and endDate.IsLaterThan(startDate)
   );
-  
-  --public SetVenue: ConfVenue ==> ()
-  --SetVenue(venue) == (
-  --  Venue := venue;
-  --)
-  --pre venue in set WebSummit.Venues
-  --post Venue = venue;
   
   --public AddTalk: Talk*Date ==> ()
   --AddTalk(talk, date) == (
@@ -27,4 +26,22 @@ operations
   --)
   --pre not date in set rng Schedule and not talk in set dom Schedule
   --post Schedule = Schedule~ ++ { talk |-> date };
+  
+  public ScheduleTalk: Talk ==> ()
+  ScheduleTalk(talk) == (
+  	Talks := Talks ++ { talk.Title |-> talk };
+  )
+  pre (
+  	talk.Date.IsLaterThan(Start)
+  	and talk.Date.IsEarlierThan(End)
+  	and IsFree(talk.Start, talk.End)
+  );
+  
+  pure public IsFree: Time * Time ==> bool
+	IsFree(fromTime, toTime) == (
+		for all talk in set rng Talks do
+			if Time`DoOverlap(fromTime, toTime, talk.Start, talk.End) then
+				return false;
+		return true;
+	);
 end Conference

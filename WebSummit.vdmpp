@@ -6,15 +6,16 @@ types
 	public WSTicketType = <Company> | <Attendee> | <Volunteer>;
 	public WSTicketStock = map WSTicketType to nat;
 	public WSTicketPrice = map WSTicketType to nat;
-	public WSConf = set of Conference;
-	public WSConfName = seq1 of char;
+	public WSVenues = map Venue`VenueName to Venue;
+	
 instance variables
 	private Account : WSAccount := [];
 	public WaitingList : WSWaitingList := {};
 	public Attendees : WSAttendees := { |-> };
 	private TicketStock : WSTicketStock;
 	private TicketPrice : WSTicketPrice;
-	public Conferences : WSConf := {};
+	public Conferences : set of Conference := {};
+	public Venues : WSVenues := { |-> }
 operations
 	-- Constructor
 	public WebSummit: WSTicketStock * WSTicketPrice ==> WebSummit
@@ -32,7 +33,11 @@ operations
 		Attendees := Attendees ++ { name |-> new User(name, ticket)};
 	)
 	pre not ticket = <Volunteer> and TicketStock(ticket) > 0
-	post card dom Attendees >= card dom Attendees~ and TicketStock(ticket) = TicketStock~(ticket) - 1 and len Account = len Account~ + 1;
+	post (
+		card dom Attendees >= card dom Attendees~ 
+		and TicketStock(ticket) = TicketStock~(ticket) - 1 
+		and len Account = len Account~ + 1
+	);
 
 	-- Retrieve the account balance
 	public GetAccountBalance: () ==> int
@@ -74,20 +79,30 @@ operations
 	
 	-- Get the total number of ticket holders (volunteers included)
 	public GetNumberOfAttendees: () ==> nat
-	GetNumberOfAttendees() == return card dom Attendees
+	GetNumberOfAttendees() == ( 
+		return card dom Attendees;
+	)
 	post RESULT = card dom Attendees;
 	
 	-- Get the actual total number of attendees (volunteers included)
 	public GetNumberOfRegisteredAttendees: () ==> nat
-	GetNumberOfRegisteredAttendees() == 
-		return card { user |  user in set rng Attendees & user.State = <Registered> }
+	GetNumberOfRegisteredAttendees() == (
+		return card { user | user in set rng Attendees & user.State = <Registered> };
+	)
 	post RESULT = card { user | user in set rng Attendees & user.State = <Registered>};
 	
-	public AddConference: WSConfName ==> ()
-	AddConference(confName) == (
-	  Conferences := Conferences union {new Conference(confName)}
+	-- Schedule a venue for the event
+	public ScheduleVenue: Venue`VenueName * Date * Date ==> ()
+	ScheduleVenue(name, startDate, endDate) == (
+		Venues := Venues ++ { name |-> new Venue(name, startDate, endDate) };
 	)
-	pre card { conf | conf in set Conferences & conf.Name = confName } = 0
-	post card { conf | conf in set Conferences & conf.Name = confName } = 1;
+	post name in set dom Venues and card dom Venues >= card dom Venues~;
 	
+	-- Schedule a conference 
+	public ScheduleConference: Venue`VenueName * Conference`ConfName * Date * Date ==> ()
+	ScheduleConference(venue, conf, startDate, endDate) == (
+		Venues(venue).ScheduleConference(conf, startDate, endDate);
+	)
+	pre venue in set dom Venues
+	post conf in set dom Venues(venue).Conferences;
 end WebSummit

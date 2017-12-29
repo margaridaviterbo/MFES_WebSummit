@@ -1,0 +1,42 @@
+class Date
+instance variables
+	public Day: nat1;
+	public Month: nat1;
+	public Year: nat1;
+operations
+	public Date: nat1 * nat1 * nat1 ==> Date
+	Date(d, m, y) == (
+		Day := d;
+		Month := m;
+		Year := y;
+	);
+	
+	pure public IsEarlierThan: Date ==> bool
+	IsEarlierThan(other) == (
+		if Year < other.Year then return true;
+		if Year = other.Year and Month < other.Month then return true;
+		if Year = other.Year and Month = other.Month and Day <= other.Day then return true;
+		return false;
+	);
+	
+	pure public IsLaterThan: Date ==> bool
+	IsLaterThan(other) == (
+		if Year > other.Year then return true;
+		if Year = other.Year and Month > other.Month then return true;
+		if Year = other.Year and Month = other.Month and Day >= other.Day then return true;
+		return false;
+	);
+	
+	pure public static DoOverlap: Date * Date * Date * Date ==> bool
+	DoOverlap(start1, end1, start2, end2) == (
+		return (
+			(start1.IsEarlierThan(start2) and end1.IsLaterThan(start2))
+			or
+			(start2.IsEarlierThan(start1) and end2.IsLaterThan(start1))
+		);
+	)
+	pre (
+		start1.IsEarlierThan(end1) 
+		and start2.IsEarlierThan(end2)
+	);
+end Date
