@@ -48,7 +48,7 @@ operations
   -- Test scheduling a venue for the event
   public TestScheduleVenue: () ==> ()
   TestScheduleVenue() == (
-  	WebSummit.ScheduleVenue("FIL 1", new Date(4,11,2017), new Date(9,11,2017));
+  	WebSummit.ScheduleVenue("FIL 1", new Date(4,11,2017), new Date(9,11,2017), 10000);
   	AssertTrue(card dom WebSummit.Venues = 1);
   );
   
@@ -93,20 +93,20 @@ operations
 	-- Trying to schedule a venue with bad dates
 	public TestScheduleVenueBadDates: () ==> ()
 	TestScheduleVenueBadDates() == (
-		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(3,11,2017));
+		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(3,11,2017), 10000);
 	);
 	
 	-- Trying to schedule a conference with bad dates
 	public TestScheduleConferenceBadDates: () ==> ()
 	TestScheduleConferenceBadDates() == (
-		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017));
+		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017), 10000);
 		WebSummit.ScheduleConference("MEO Arena", "Panda Conf", new Date(4,11, 2016), new Date(5,11,2016));
 	);
 	
 	-- Trying to schedule two conferences for the same venue at the same time
 	public TestScheduleOverlappingConferences: () ==> ()
 	TestScheduleOverlappingConferences() == (
-		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017));
+		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017), 10000);
 		WebSummit.ScheduleConference("MEO Arena", "Future Societies", new Date(4,11,2017), new Date(5,11,2017));
 		WebSummit.ScheduleConference("MEO Arena", "Panda Conf", new Date(5,11,2017), new Date(6,11,2017));
 	);
@@ -114,7 +114,7 @@ operations
 	-- Trying to schedule two talks at the same time for one conference
 	public TestScheduleOverlappingTalks: () ==> ()
 	TestScheduleOverlappingTalks() == (
-		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017));
+		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017), 10000);
 		WebSummit.ScheduleConference("MEO Arena", "Future Societies", new Date(4,11,2017), new Date(5,11,2017));
 		AssertTrue(WebSummit.Conferences("Future Societies").Venue = "MEO Arena");
 		WebSummit.SellTicket("João Silva", <Attendee>);

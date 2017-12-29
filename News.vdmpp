@@ -1,0 +1,28 @@
+class News
+types
+	public NewsTitle = seq1 of char;
+	public NewsContent = seq1 of char;
+	public NewsConf = [Conference`ConfName];
+instance variables
+	public Author : User`UserName;
+	public Title : NewsTitle;
+	public Content : NewsContent;
+	public Conference : NewsConf := nil;
+operations
+	public News: User`UserName * NewsTitle * NewsContent ==> News
+	News(author, title, content) == (
+		Author := author;
+		Title := title;
+		Content := content;
+		return self;
+	);
+
+	public News: User`UserName * NewsTitle * NewsContent * Conference`ConfName ==> News
+	News(author, title, content, conf) == (
+		Author := author;
+		Title := title;
+		Content := content;
+		Conference := conf;
+		return self;
+	);
+end News
