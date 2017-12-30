@@ -189,7 +189,93 @@ operations
 	)
 	post name in set dom Workshops and card dom Workshops > card dom Workshops~;
 	
-	--TODO(PRINCESA) Register attendee to one workshop 
+	--Register attendee to one workshop
+	public RegisterAttendeeToWorkshop: User`UserName * Workshop`WorkshopName ==> ()
+	RegisterAttendeeToWorkshop(user, workshop) == (
+	  Workshops(workshop).Attendees := Workshops(workshop).Attendees union { user }
+	)
+	pre (
+	 card Workshops(workshop).Attendees < Workshops(workshop).Vacancies
+	 and not user in set Workshops(workshop).Attendees
+	)
+	post (
+	  user in set Workshops(workshop).Attendees
+	  and card Workshops(workshop).Attendees = card Workshops~(workshop).Attendees + 1 
+	);
+	
+	-- Retrieve all workshops
+	public GetAllWorkshops: () ==> set of Workshop
+	GetAllWorkshops() == (
+	   return rng Workshops
+	)
+	post (
+	 Workshops = Workshops~
+	 and RESULT = rng Workshops
+	 );
+	
+	-- Retrieve all workshops at a given day
+	public GetWorkshopsOfDay: Date ==> set of Workshop`WorkshopName
+	GetWorkshopsOfDay(date) == (
+	   return { workshop | workshop in set dom Workshops & date.Equals(Workshops(workshop).Date) }
+	)
+	post (
+	   Workshops = Workshops~
+	   and RESULT = { workshop | workshop in set dom Workshops & date.Equals(Workshops(workshop).Date) }
+	);
+	
+	-- Retrive all workshops at a given time
+	public GetWorkshopsAtTime: Time ==> set of Workshop`WorkshopName
+	GetWorkshopsAtTime(time) == (
+	   return { workshop | workshop in set dom Workshops & time.IsLaterThan(Workshops(workshop).Start) and time.IsEarlierThan(Workshops(workshop).End) }
+	)
+	post (
+	   Workshops = Workshops~
+	   and RESULT = { workshop | workshop in set dom Workshops & time.IsLaterThan(Workshops(workshop).Start) and time.IsEarlierThan(Workshops(workshop).End) }
+	);
+	
+	-- Retrive all attendees of a given workshop
+	public GetAttendeesOfWorkshop: Workshop`WorkshopName ==> set of User`UserName
+	GetAttendeesOfWorkshop(workshop) == (
+	   return Workshops(workshop).Attendees
+	)
+	pre workshop in set dom Workshops
+	post (
+	 Workshops = Workshops~
+   and RESULT = Workshops(workshop).Attendees
+	);
+	
+	-- Retrieve venue where workshop is taking place
+	public GetVenueOfWorkshop: Workshop`WorkshopName ==> Venue`VenueName
+	GetVenueOfWorkshop(workshop) == (
+	   return Workshops(workshop).Venue
+	)
+	pre workshop in set dom Workshops
+  post (
+   Workshops = Workshops~
+   and RESULT = Workshops(workshop).Venue
+  );
+	
+	-- Retrieve subject of workshop
+	public GetSubjectOfWorkshop: Workshop`WorkshopName ==> Workshop`WorkshopSubject
+	GetSubjectOfWorkshop(workshop) == (
+	   return Workshops(workshop).Subject
+	)
+	pre workshop in set dom Workshops
+  post (
+   Workshops = Workshops~
+   and RESULT = Workshops(workshop).Subject
+  );
+	
+	-- Retrieve company giving a specific workshop
+	public GetCompanyOfWorkshop: Workshop`WorkshopName ==> Workshop`WorkshopCompany
+  GetCompanyOfWorkshop(workshop) == (
+     return Workshops(workshop).Company
+  )
+  pre workshop in set dom Workshops
+  post (
+   Workshops = Workshops~
+   and RESULT = Workshops(workshop).Company
+  );
 	
 	-- Publish a news arcticle about the event
 	public PublishNewsArcticle: User`UserName * News`NewsTitle * News`NewsContent ==> ()
