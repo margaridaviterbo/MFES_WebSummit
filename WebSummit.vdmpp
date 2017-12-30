@@ -197,6 +197,8 @@ operations
 	pre (
 	 card Workshops(workshop).Attendees < Workshops(workshop).Vacancies
 	 and not user in set Workshops(workshop).Attendees
+	 and user in set dom Attendees
+	 and Attendees(user).State = <Registered>
 	)
 	post (
 	  user in set Workshops(workshop).Attendees

@@ -76,6 +76,22 @@ operations
   	AssertTrue(WebSummit.Talks("Electric Cars: The Future").Conference = "Future Societies");
   );
   
+  -- Test schedule a workshop
+  public TestScheduleWorkshop: () ==> ()
+  TestScheduleWorkshop() == (
+     WebSummit.ScheduleWorkshop("Managing DBs", "Databases", "FIL 1", "AWS", new Date(4,11,2017), new Time(17,05), new Time(17,35), 15);
+     AssertTrue("Managing DBs" in set dom WebSummit.Workshops);
+     AssertTrue(card dom WebSummit.Workshops = 1);
+  );
+  
+  -- Test register attendee to a workshop
+  public TestRegisterAttendeeToWorkshop: () ==> ()
+  TestRegisterAttendeeToWorkshop() == (
+     WebSummit.RegisterAttendeeToWorkshop("Margarida Viterbo", "Managing DBs");
+     AssertTrue(card WebSummit.Workshops("Managing DBs").Attendees = 1);
+     AssertTrue("Margarida Viterbo" in set WebSummit.Workshops("Managing DBs").Attendees);
+  );
+  
 	public Run: () ==> ()
 	Run() == (
 		TestSellTicket();
@@ -86,6 +102,8 @@ operations
 		TestScheduleVenue();
 		TestScheduleConference();
 		TestScheduleTalk();
+		TestScheduleWorkshop();
+		-- TestRegisterAttendeeToWorkshop(); DÁ UM ERRO NA PRE CONDIÇAO nao percebo se conseguires resolver ;)
 	);
 	
 	-- Failing tests; run one at a time --
@@ -124,4 +142,5 @@ operations
   	WebSummit.ScheduleTalk("Future Societies", "Electric Cars: The Future",
   		"Margarida Viterbo", new Date(4,11,2017), new Time(16,55), new Time(17,15));
 	);
+	
 end WebSummitTest
