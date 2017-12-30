@@ -7,7 +7,7 @@ types
 instance variables
   public Name: WorkshopName;
   public Subject: WorkshopSubject;
-  public Venue: Venue`VenueName;
+  public Stage: Stage`StageName;
   public Company: WorkshopCompany;
   public Date: Date;
   public Start: Time;
@@ -15,11 +15,11 @@ instance variables
   public Vacancies: nat;
   public Attendees: WorkshopAttendees := {};
 operations
-  public Workshop: WorkshopName * WorkshopSubject * Venue`VenueName * WorkshopCompany * Date * Time * Time * nat ==> Workshop
-  Workshop(name, subject, venue, company, date, startTime, endTime, vacancies) == (
+  public Workshop: WorkshopName * WorkshopSubject * Stage`StageName * WorkshopCompany * Date * Time * Time * nat ==> Workshop
+  Workshop(name, subject, stage, company, date, startTime, endTime, vacancies) == (
     Name := name;
     Subject := subject;
-    Venue := venue;
+    Stage := stage;
     Company := company;
     Date := date;
     Start := startTime;

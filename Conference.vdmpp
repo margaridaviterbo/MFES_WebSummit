@@ -3,14 +3,14 @@ types
   public ConfName = seq1 of char;
 instance variables
   public Name: ConfName;
-  public Venue: Venue`VenueName;
+  public Stage: Stage`StageName;
   public Start: Date;
   public End: Date;
 operations
-  public Conference: ConfName * Venue`VenueName * Date * Date ==> Conference
-  Conference(name, venue, startDate, endDate) == (
+  public Conference: Stage`StageName * ConfName * Date * Date ==> Conference
+  Conference(stage, name, startDate, endDate) == (
+  	Stage := stage;
     Name := name;
-    Venue := venue;
     Start := startDate;
     End := endDate;
     return self
