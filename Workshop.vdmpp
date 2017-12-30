@@ -3,6 +3,7 @@ types
   public WorkshopName = seq1 of char;
   public WorkshopSubject = seq1 of char;
   public WorkshopCompany = seq1 of char;
+  public WorkshopAttendees = set of User`UserName;
 instance variables
   public Name: WorkshopName;
   public Subject: WorkshopSubject;
@@ -12,6 +13,7 @@ instance variables
   public Start: Time;
   public End: Time;
   public Vacancies: nat;
+  public Attendees: WorkshopAttendees := {};
 operations
   public Workshop: WorkshopName * WorkshopSubject * Venue`VenueName * WorkshopCompany * Date * Time * Time * nat ==> Workshop
   Workshop(name, subject, venue, company, date, startTime, endTime, vacancies) == (
