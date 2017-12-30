@@ -1,0 +1,55 @@
+class Stage
+types
+	public StageName = seq1 of char;
+instance variables
+	public Venue : Venue`VenueName;
+	public Name : StageName;
+	public Start : Date;
+	public End : Date;
+operations
+	public Stage: Venue`VenueName * StageName * Date * Date ==> Stage
+	Stage(venue, name, startDate, endDate) == (
+		Venue := venue;
+		Name := name;
+		Start := startDate;
+		End := endDate;
+		return self;
+	);
+	
+	pure public IsFree: Date * Date * WebSummit`WSConferences * WebSummit`WSWorkshops ==> bool
+	IsFree(fromDate, toDate, conferences, workshops) == (
+		for all conf in set rng conferences do
+			if (
+				conf.Stage = Name
+				and Date`DoOverlap(fromDate, toDate, conf.Start, conf.End)
+			)
+			then return false;
+		for all workshop in set rng workshops do
+			if (
+				workshop.Stage = Name
+				and workshop.Date.IsLaterThan(fromDate)
+				and workshop.Date.IsEarlierThan(toDate)
+			)
+			then return false;
+		return true;
+	);
+	
+	pure public IsFree: Date * Time * Time * WebSummit`WSConferences * WebSummit`WSWorkshops ==> bool
+	IsFree(date, fromTime, toTime, conferences, workshops) == (
+		for all conf in set rng conferences do
+			if (
+				conf.Stage = Name
+				and date.IsLaterThan(conf.Start)
+				and date.IsEarlierThan(conf.End)
+			)
+			then return false;
+		for all workshop in set rng workshops do
+			if (
+				workshop.Stage = Name
+				and date.Equals(workshop.Date)
+				and Time`DoOverlap(fromTime, toTime, workshop.Start, workshop.End)
+			)
+			then return false;
+		return true;
+	)
+end Stage

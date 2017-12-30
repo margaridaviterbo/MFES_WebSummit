@@ -36,14 +36,6 @@ operations
 	  WebSummit.AcceptVolunteer("Joana Viterbo");
 	  AssertTrue(WebSummit.GetNumberOfAttendees() = 3);  
 	); 
-	
-	-- Test registering a volunteer
-	public TestRegisterVolunteer: () ==> ()
-  TestRegisterVolunteer() == (
-    WebSummit.RegisterVolunteer("Joana Viterbo");
-    AssertTrue(WebSummit.GetNumberOfRegisteredAttendees() = 2);
-    AssertTrue(WebSummit.Attendees("Joana Viterbo").State = <Registered>);
-  );
   
   -- Test scheduling a venue for the event
   public TestScheduleVenue: () ==> ()
@@ -52,15 +44,23 @@ operations
   	AssertTrue(card dom WebSummit.Venues = 1);
   );
   
+  -- Test adding a stage to a venue
+  public TestAddStage: () ==> ()
+  TestAddStage() == (
+  	WebSummit.AddStage("FIL 1", "Main Stage");
+  	AssertTrue(card dom WebSummit.Stages = 1);
+  	AssertTrue(WebSummit.Stages("Main Stage").Venue = "FIL 1");
+  );
+  
   -- Test scheduling a conference for the event
   public TestScheduleConference: () ==> ()
   TestScheduleConference() == (
-  	WebSummit.ScheduleConference("FIL 1", "Future Societies", new Date(4,11,2017), new Date(5,11,2017));
+  	WebSummit.ScheduleConference("Main Stage", "Future Societies", new Date(4,11,2017), new Date(5,11,2017));
   	AssertTrue(card dom WebSummit.Conferences = 1);
-  	AssertTrue(WebSummit.Conferences("Future Societies").Venue = "FIL 1");
-  	WebSummit.ScheduleConference("FIL 1", "Money Conf", new Date(6,11,2017), new Date(7,11,2017));
+  	AssertTrue(WebSummit.Conferences("Future Societies").Stage = "Main Stage");
+  	WebSummit.ScheduleConference("Main Stage", "Money Conf", new Date(6,11,2017), new Date(7,11,2017));
   	AssertTrue(card dom WebSummit.Conferences = 2);
-  	AssertTrue(WebSummit.Conferences("Money Conf").Venue = "FIL 1");
+  	AssertTrue(WebSummit.Conferences("Money Conf").Stage = "Main Stage");
   );
   
   -- Test scheduling a talk for a conference
@@ -79,17 +79,20 @@ operations
   -- Test schedule a workshop
   public TestScheduleWorkshop: () ==> ()
   TestScheduleWorkshop() == (
-     WebSummit.ScheduleWorkshop("Managing DBs", "Databases", "FIL 1", "AWS", new Date(4,11,2017), new Time(17,05), new Time(17,35), 15);
-     AssertTrue("Managing DBs" in set dom WebSummit.Workshops);
-     AssertTrue(card dom WebSummit.Workshops = 1);
+  	WebSummit.AddStage("FIL 1", "Secondary Stage");
+    WebSummit.ScheduleWorkshop("Managing DBs", "Databases", "Secondary Stage", "AWS", new Date(4,11,2017), new Time(17,05), new Time(17,35), 15);
+    AssertTrue("Managing DBs" in set dom WebSummit.Workshops);
+    AssertTrue(card dom WebSummit.Workshops = 1);
   );
   
   -- Test register attendee to a workshop
   public TestRegisterAttendeeToWorkshop: () ==> ()
   TestRegisterAttendeeToWorkshop() == (
-     WebSummit.RegisterAttendeeToWorkshop("Margarida Viterbo", "Managing DBs");
-     AssertTrue(card WebSummit.Workshops("Managing DBs").Attendees = 1);
-     AssertTrue("Margarida Viterbo" in set WebSummit.Workshops("Managing DBs").Attendees);
+  	WebSummit.RegisterAttendee("Margarida Viterbo");
+  	AssertTrue(WebSummit.Attendees("Margarida Viterbo").State = <Registered>);
+		WebSummit.RegisterAttendeeToWorkshop("Margarida Viterbo", "Managing DBs");
+ 		AssertTrue(card WebSummit.Workshops("Managing DBs").Attendees = 1);
+   	AssertTrue("Margarida Viterbo" in set WebSummit.Workshops("Managing DBs").Attendees);
   );
   
 	public Run: () ==> ()
@@ -98,12 +101,12 @@ operations
 		TestRegisterAttendee();
 		TestAddToWaitingList();
 		TestAcceptVolunteer();
-		TestRegisterVolunteer();
 		TestScheduleVenue();
+		TestAddStage();
 		TestScheduleConference();
 		TestScheduleTalk();
 		TestScheduleWorkshop();
-		-- TestRegisterAttendeeToWorkshop(); DÁ UM ERRO NA PRE CONDIÇAO nao percebo se conseguires resolver ;)
+		TestRegisterAttendeeToWorkshop();
 	);
 	
 	-- Failing tests; run one at a time --
@@ -118,23 +121,26 @@ operations
 	public TestScheduleConferenceBadDates: () ==> ()
 	TestScheduleConferenceBadDates() == (
 		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017), 10000);
-		WebSummit.ScheduleConference("MEO Arena", "Panda Conf", new Date(4,11, 2016), new Date(5,11,2016));
+		WebSummit.AddStage("MEO Arena", "Main Stage");
+		WebSummit.ScheduleConference("Main Stage", "Panda Conf", new Date(4,11, 2016), new Date(5,11,2016));
 	);
 	
 	-- Trying to schedule two conferences for the same venue at the same time
 	public TestScheduleOverlappingConferences: () ==> ()
 	TestScheduleOverlappingConferences() == (
 		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017), 10000);
-		WebSummit.ScheduleConference("MEO Arena", "Future Societies", new Date(4,11,2017), new Date(5,11,2017));
-		WebSummit.ScheduleConference("MEO Arena", "Panda Conf", new Date(5,11,2017), new Date(6,11,2017));
+		WebSummit.AddStage("MEO Arena", "Main Stage");
+		WebSummit.ScheduleConference("Main Stage", "Future Societies", new Date(4,11,2017), new Date(5,11,2017));
+		WebSummit.ScheduleConference("Main Stage", "Panda Conf", new Date(5,11,2017), new Date(6,11,2017));
 	);
 	
 	-- Trying to schedule two talks at the same time for one conference
 	public TestScheduleOverlappingTalks: () ==> ()
 	TestScheduleOverlappingTalks() == (
 		WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017), 10000);
-		WebSummit.ScheduleConference("MEO Arena", "Future Societies", new Date(4,11,2017), new Date(5,11,2017));
-		AssertTrue(WebSummit.Conferences("Future Societies").Venue = "MEO Arena");
+		WebSummit.AddStage("MEO Arena", "Main Stage");
+		WebSummit.ScheduleConference("Main Stage", "Future Societies", new Date(4,11,2017), new Date(5,11,2017));
+		AssertTrue(WebSummit.Conferences("Future Societies").Stage = "Main Stage");
 		WebSummit.SellTicket("João Silva", <Attendee>);
 		WebSummit.SellTicket("Margarida Viterbo", <Attendee>);
 		WebSummit.ScheduleTalk("Future Societies", "The City of the Future", 
