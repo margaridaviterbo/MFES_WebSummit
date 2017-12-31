@@ -52,6 +52,12 @@ operations
   	AssertTrue(WebSummit.Stages("Main Stage").Venue = "FIL 1");
   );
   
+  -- Test retrieve the venue of a stage
+	public TestGetVenueOfStage: () ==> ()
+	TestGetVenueOfStage() == (
+		AssertTrue(WebSummit.GetVenueOfStage("Main Stage").Name = "FIL 1");
+	);
+  
   -- Test scheduling a conference for the event
   public TestScheduleConference: () ==> ()
   TestScheduleConference() == (
@@ -62,6 +68,34 @@ operations
   	AssertTrue(card dom WebSummit.Conferences = 2);
   	AssertTrue(WebSummit.Conferences("Money Conf").Stage = "Main Stage");
   );
+  
+  -- Test retrieve all the conferences of a day
+	public TestGetConferencesOfDay: () ==> ()
+	TestGetConferencesOfDay() == (
+		AssertTrue(card WebSummit.GetConferencesOfDay(new Date(4,11,2017)) = 1);
+		AssertTrue(card WebSummit.GetConferencesOfDay(new Date(6,11,2017)) = 1);
+		AssertTrue(card WebSummit.GetConferencesOfDay(new Date(8,11,2017)) = 0);
+	);
+	
+	-- Test retrieve stage where conference is taking place
+	public TestGetConferenceStage: () ==> ()
+	TestGetConferenceStage() == (
+		AssertTrue(WebSummit.GetConferenceStage("Future Societies").Name = "Main Stage");
+		AssertTrue(WebSummit.GetConferenceStage("Money Conf").Name = "Main Stage");
+	);
+	
+	-- Test retrieve all the conferences taking place in a stage
+	public TestGetConferencesInStage: () ==> ()
+	TestGetConferencesInStage() == (
+		AssertTrue(card WebSummit.GetConferencesInStage("Main Stage") = 2);
+	);
+	
+	-- Retrieve all the conferences taking place in a stage in a given day
+	public TestGetConferencesInStageOfDay: () ==> ()
+	TestGetConferencesInStageOfDay() == (
+		AssertTrue(card WebSummit.GetConferencesInStageOfDay("Main Stage", new Date(4,11,2017)) = 1);
+		AssertTrue(card WebSummit.GetConferencesInStageOfDay("Main Stage", new Date(8,11,2017)) = 0);
+	);
   
   -- Test scheduling a talk for a conference
   public TestScheduleTalk: () ==> ()
@@ -76,6 +110,34 @@ operations
   	AssertTrue(WebSummit.Talks("Electric Cars: The Future").Conference = "Future Societies");
   );
   
+  -- Test retrieve all talks of a specific day
+  public TestGetTalksOfDay: () ==> ()
+  TestGetTalksOfDay() == (
+  	AssertTrue(card WebSummit.GetTalksOfDay(new Date(4,11,2017)) = 2);
+  );
+  
+  -- Test retrieve talks happening at a specific hour of a day
+  public TestGetTalksAtTime: () ==> ()
+  TestGetTalksAtTime() == (
+  	AssertTrue(card WebSummit.GetTalksAtTime(new Date(4,11,2017), new Time(17,10)) = 1);
+  	AssertTrue(card WebSummit.GetTalksAtTime(new Date(4,11,2017), new Time(17,03)) = 0);
+  );
+  
+  -- Test retrieve all the talks given by a speaker
+  public TestGetTalksOfSpeaker: () ==> ()
+  TestGetTalksOfSpeaker() == (
+  	AssertTrue(card WebSummit.GetTalksOfSpeaker("João Silva") = 1);
+  	AssertTrue(card WebSummit.GetTalksOfSpeaker("Margarida Viterbo") = 1);
+  	AssertTrue(card WebSummit.GetTalksOfSpeaker("Joana Viterbo") = 0);
+  );
+  
+  -- Test retrieve all the talks from a specific conference for a specific day
+  public TestGetConferenceTalksOfDay: () ==> ()
+  TestGetConferenceTalksOfDay() == (
+  	AssertTrue(card WebSummit.GetConferenceTalksOfDay("Future Societies", new Date(4,11,2017)) = 2);
+  	AssertTrue(card WebSummit.GetConferenceTalksOfDay("Future Societies", new Date(5,11,2017)) = 0);
+  );
+  
   -- Test schedule a workshop
   public TestScheduleWorkshop: () ==> ()
   TestScheduleWorkshop() == (
@@ -83,6 +145,27 @@ operations
     WebSummit.ScheduleWorkshop("Managing DBs", "Databases", "Secondary Stage", "AWS", new Date(4,11,2017), new Time(17,05), new Time(17,35), 15);
     AssertTrue("Managing DBs" in set dom WebSummit.Workshops);
     AssertTrue(card dom WebSummit.Workshops = 1);
+  );
+  
+  -- Test retrieve all workshops
+  public TestGetAllWorkshops: () ==> ()
+  TestGetAllWorkshops() == (
+  	dcl workshops: set of Workshop := WebSummit.GetAllWorkshops();
+  	AssertTrue(card workshops = 1);
+  );
+  
+  -- Test retrieve all workshops of a given day
+  public TestGetWorkshopsOfDay: () ==> ()
+  TestGetWorkshopsOfDay() == (
+  	AssertTrue(card WebSummit.GetWorkshopsOfDay(new Date(4,11,2017)) = 1);
+  	AssertTrue(card WebSummit.GetWorkshopsOfDay(new Date(5,11,2018)) = 0);
+  );
+  
+  -- Test retrieve workshops at a given time
+  public TestGetWorkshopsAtTime: () ==> ()
+  TestGetWorkshopsAtTime() == (
+  	AssertTrue(card WebSummit.GetWorkshopsAtTime(new Time(17,05)) = 1);
+  	AssertTrue(card WebSummit.GetWorkshopsAtTime(new Time(06,00)) = 0);
   );
   
   -- Test register attendee to a workshop
@@ -95,6 +178,78 @@ operations
    	AssertTrue("Margarida Viterbo" in set WebSummit.Workshops("Managing DBs").Attendees);
   );
   
+  -- Test retrieve attendees of workshop
+  public TestGetAttendeesOfWorkshop: () ==> ()
+  TestGetAttendeesOfWorkshop() == (
+  	AssertTrue(card WebSummit.GetAttendeesOfWorkshop("Managing DBs") = 1)
+  );
+  
+  -- Test retrieve stage where workshop is taking place
+	public TestGetStageOfWorkshop: () ==> ()
+	TestGetStageOfWorkshop() == (
+		AssertTrue(WebSummit.GetStageOfWorkshop("Managing DBs").Name = "Secondary Stage");
+	);
+	
+	-- Test retrieve subject of workshop
+	public TestGetSubjectOfWorkshop: () ==> ()
+	TestGetSubjectOfWorkshop() == (
+		AssertTrue(WebSummit.GetSubjectOfWorkshop("Managing DBs") = "Databases");
+	);
+	
+	-- Test retrieve company giving a specific workshop
+	public TestGetCompanyOfWorkshop: () ==> ()
+	TestGetCompanyOfWorkshop() == (
+		AssertTrue(WebSummit.GetCompanyOfWorkshop("Managing DBs") = "AWS");
+	);
+	
+	-- Retrieve all the workshops taking place in a stage
+	public TestGetWorkshopsInStage: () ==> ()
+	TestGetWorkshopsInStage() == (
+		AssertTrue(card WebSummit.GetWorkshopsInStage("Secondary Stage") = 1);
+	);
+	
+	-- Test retrieve all the workshops taking place in a stage in a given day
+	public TestGetWorkshopsInStageOfDay: () ==> ()
+	TestGetWorkshopsInStageOfDay() == (
+		AssertTrue(card WebSummit.GetWorkshopsInStageOfDay("Secondary Stage", new Date(4,11,2017)) = 1);
+		AssertTrue(card WebSummit.GetWorkshopsInStageOfDay("Secondary Stage", new Date(5,11,2017)) = 0);
+	);
+	
+	-- Test publish a news arcticle about the event
+	public TestPublishNewsArcticle: () ==> ()
+	TestPublishNewsArcticle() == (
+		WebSummit.PublishNewsArcticle("João Silva", "Title", "Content");
+		AssertTrue(card dom WebSummit.News = 1);
+		AssertTrue(WebSummit.News("Title").Content = "Content");
+	);
+	
+	-- Test publish a news arcticle about a conference
+	public TestPublishNewsArcticleAboutConf: () ==> ()
+	TestPublishNewsArcticleAboutConf() == (
+		WebSummit.PublishNewsArcticleAboutConf("João Silva", "Title About Money Conf", "Content", "Money Conf");
+		AssertTrue(card dom WebSummit.News = 2);
+		AssertTrue(WebSummit.News("Title About Money Conf").Conference = "Money Conf");
+		AssertTrue(WebSummit.News("Title About Money Conf").Content = "Content");
+	);
+	
+	-- Test retrieve all news arcticles 
+	public TestGetAllNews: () ==> ()
+	TestGetAllNews() == (
+		AssertTrue(card WebSummit.GetAllNews() = 2);
+	);
+	
+	-- Test retrieve all news arcticles about a specific conference
+	public TestGetNewsAboutConf: () ==> ()
+	TestGetNewsAboutConf() == (
+		AssertTrue(card WebSummit.GetNewsAboutConf("Money Conf") = 1);
+	); 
+	
+	-- Test retrieve all news arcticles written by a specific author
+	public TestGetNewsByAuthor: () ==> ()
+	TestGetNewsByAuthor() == (
+		AssertTrue(card WebSummit.GetNewsByAuthor("João Silva") = 2);
+	);
+  
 	public Run: () ==> ()
 	Run() == (
 		TestSellTicket();
@@ -103,12 +258,35 @@ operations
 		TestAcceptVolunteer();
 		TestScheduleVenue();
 		TestAddStage();
+		TestGetVenueOfStage();
 		TestScheduleConference();
+		TestGetConferencesOfDay();
+		TestGetConferenceStage();
+		TestGetConferencesInStage();
+		TestGetConferencesInStageOfDay();
 		TestScheduleTalk();
+		TestGetTalksOfDay();
+		TestGetTalksAtTime();
+		TestGetTalksOfSpeaker();
+		TestGetConferenceTalksOfDay();
 		TestScheduleWorkshop();
+		TestGetAllWorkshops();
+		TestGetWorkshopsOfDay();
+		TestGetWorkshopsAtTime();
 		TestRegisterAttendeeToWorkshop();
+		TestGetAttendeesOfWorkshop();
+		TestGetStageOfWorkshop();
+		TestGetSubjectOfWorkshop();
+		TestGetCompanyOfWorkshop();
+		TestGetWorkshopsInStage();
+		TestGetWorkshopsInStageOfDay();
+		TestPublishNewsArcticle();
+		TestPublishNewsArcticleAboutConf();
+		TestGetAllNews();
+		TestGetNewsAboutConf();
+		TestGetNewsByAuthor();
 	);
-	
+		
 	-- Failing tests; run one at a time --
 	
 	-- Trying to schedule a venue with bad dates

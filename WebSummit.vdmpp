@@ -250,14 +250,14 @@ operations
 	);
 	
 	-- Retrieve stage where workshop is taking place
-	public GetStageOfWorkshop: Workshop`WorkshopName ==> Venue`VenueName
+	public GetStageOfWorkshop: Workshop`WorkshopName ==> Stage
 	GetStageOfWorkshop(workshop) == (
-	   return Workshops(workshop).Stage
+	   return Stages(Workshops(workshop).Stage)
 	)
 	pre workshop in set dom Workshops
   post (
    	Workshops = Workshops~
-   	and RESULT = Workshops(workshop).Stage
+   	and RESULT = Stages(Workshops(workshop).Stage)
   );
 	
 	-- Retrieve subject of workshop
@@ -358,11 +358,11 @@ operations
 	-- Retrieve all the workshops taking place in a stage in a given day
 	public GetWorkshopsInStageOfDay: Stage`StageName * Date ==> set of Workshop
 	GetWorkshopsInStageOfDay(stage, date) == (
-		return { workshop | workshop in set rng Workshops & workshop.Stage = stage and workshop.Date = date };
+		return { workshop | workshop in set rng Workshops & workshop.Stage = stage and workshop.Date.Equals(date) };
 	)
 	post (
 		Workshops = Workshops~
-		and RESULT = { workshop | workshop in set rng Workshops & workshop.Stage = stage and workshop.Date = date }
+		and RESULT = { workshop | workshop in set rng Workshops & workshop.Stage = stage and workshop.Date.Equals(date) }
 	);
 	
 	-- Retrieve all the conferences taking place in a stage in a given day
