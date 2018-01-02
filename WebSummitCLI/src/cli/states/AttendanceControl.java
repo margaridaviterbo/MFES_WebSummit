@@ -17,6 +17,7 @@ public class AttendanceControl extends State {
 		menu.addOption("Register attendee", new RegisterAttendee(sm));
 		menu.addOption("Add volunteer to waiting list", new AddVolunteerToWaitingList(sm));
 		menu.addOption("Accept volunteer", new AcceptVolunteer(sm));
+		menu.addOption("Register attendee to workshop", new RegisterWorkshopAttendee(sm));
 	}
 
 	@Override

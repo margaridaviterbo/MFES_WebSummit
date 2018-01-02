@@ -16,6 +16,7 @@ public class WebSummitTest extends TestBase {
           new Maplet(websummit.quotes.AttendeeQuote.getInstance(), 250L));
   private WebSummit WebSummit = new WebSummit(Utils.copy(TicketStock), Utils.copy(TicketPrice));
 
+  // DONE
   public void TestSellTicket() {
 
     WebSummit.SellTicket("João Silva", websummit.quotes.AttendeeQuote.getInstance());
@@ -35,6 +36,7 @@ public class WebSummitTest extends TestBase {
                     .longValue()));
   }
 
+  // DONE
   public void TestRegisterAttendee() {
 
     WebSummit.RegisterAttendee("João Silva");
@@ -45,24 +47,28 @@ public class WebSummitTest extends TestBase {
             websummit.quotes.RegisteredQuote.getInstance()));
   }
 
+  // DONE
   public void TestAddToWaitingList() {
 
     WebSummit.AddToWaitingList("Joana Viterbo");
     AssertTrue(Utils.equals(WebSummit.WaitingList.size(), 1L));
   }
 
+  // DONE
   public void TestAcceptVolunteer() {
 
     WebSummit.AcceptVolunteer("Joana Viterbo");
     AssertTrue(Utils.equals(WebSummit.GetNumberOfAttendees(), 3L));
   }
 
+  // DONE
   public void TestScheduleVenue() {
 
     WebSummit.ScheduleVenue("FIL 1", new Date(4L, 11L, 2017L), new Date(9L, 11L, 2017L), 10000L);
     AssertTrue(Utils.equals(MapUtil.dom(WebSummit.Venues).size(), 1L));
   }
 
+  // DONE
   public void TestAddStage() {
 
     WebSummit.AddStage("FIL 1", "Main Stage");
@@ -70,11 +76,13 @@ public class WebSummitTest extends TestBase {
     AssertTrue(Utils.equals(((Stage) Utils.get(WebSummit.Stages, "Main Stage")).Venue, "FIL 1"));
   }
 
+  // TODO
   public void TestGetVenueOfStage() {
 
     AssertTrue(Utils.equals(WebSummit.GetVenueOfStage("Main Stage").Name, "FIL 1"));
   }
 
+  // DONE
   public void TestScheduleConference() {
 
     WebSummit.ScheduleConference(
@@ -92,6 +100,7 @@ public class WebSummitTest extends TestBase {
             ((Conference) Utils.get(WebSummit.Conferences, "Money Conf")).Stage, "Main Stage"));
   }
 
+  // TODO
   public void TestGetConferencesOfDay() {
 
     AssertTrue(Utils.equals(WebSummit.GetConferencesOfDay(new Date(4L, 11L, 2017L)).size(), 1L));
@@ -99,17 +108,20 @@ public class WebSummitTest extends TestBase {
     AssertTrue(Utils.equals(WebSummit.GetConferencesOfDay(new Date(8L, 11L, 2017L)).size(), 0L));
   }
 
+  // TODO
   public void TestGetConferenceStage() {
 
     AssertTrue(Utils.equals(WebSummit.GetConferenceStage("Future Societies").Name, "Main Stage"));
     AssertTrue(Utils.equals(WebSummit.GetConferenceStage("Money Conf").Name, "Main Stage"));
   }
 
+  // TODO
   public void TestGetConferencesInStage() {
 
     AssertTrue(Utils.equals(WebSummit.GetConferencesInStage("Main Stage").size(), 2L));
   }
 
+  // TODO
   public void TestGetConferencesInStageOfDay() {
 
     AssertTrue(
@@ -122,6 +134,7 @@ public class WebSummitTest extends TestBase {
             0L));
   }
 
+  // DONE
   public void TestScheduleTalk() {
 
     WebSummit.ScheduleTalk(
@@ -150,11 +163,13 @@ public class WebSummitTest extends TestBase {
             "Future Societies"));
   }
 
+  // TODO
   public void TestGetTalksOfDay() {
 
     AssertTrue(Utils.equals(WebSummit.GetTalksOfDay(new Date(4L, 11L, 2017L)).size(), 2L));
   }
 
+  // TODO
   public void TestGetTalksAtTime() {
 
     AssertTrue(
@@ -165,6 +180,7 @@ public class WebSummitTest extends TestBase {
             WebSummit.GetTalksAtTime(new Date(4L, 11L, 2017L), new Time(17L, 3L)).size(), 0L));
   }
 
+  // TODO
   public void TestGetTalksOfSpeaker() {
 
     AssertTrue(Utils.equals(WebSummit.GetTalksOfSpeaker("João Silva").size(), 1L));
@@ -172,6 +188,7 @@ public class WebSummitTest extends TestBase {
     AssertTrue(Utils.equals(WebSummit.GetTalksOfSpeaker("Joana Viterbo").size(), 0L));
   }
 
+  // TODO
   public void TestGetConferenceTalksOfDay() {
 
     AssertTrue(
@@ -184,6 +201,7 @@ public class WebSummitTest extends TestBase {
             0L));
   }
 
+  // DONE
   public void TestScheduleWorkshop() {
 
     WebSummit.AddStage("FIL 1", "Secondary Stage");
@@ -200,24 +218,28 @@ public class WebSummitTest extends TestBase {
     AssertTrue(Utils.equals(MapUtil.dom(WebSummit.Workshops).size(), 1L));
   }
 
+  // TODO
   public void TestGetAllWorkshops() {
 
     VDMSet workshops = WebSummit.GetAllWorkshops();
     AssertTrue(Utils.equals(workshops.size(), 1L));
   }
 
+  // TODO
   public void TestGetWorkshopsOfDay() {
 
     AssertTrue(Utils.equals(WebSummit.GetWorkshopsOfDay(new Date(4L, 11L, 2017L)).size(), 1L));
     AssertTrue(Utils.equals(WebSummit.GetWorkshopsOfDay(new Date(5L, 11L, 2018L)).size(), 0L));
   }
 
+  // TODO
   public void TestGetWorkshopsAtTime() {
 
     AssertTrue(Utils.equals(WebSummit.GetWorkshopsAtTime(new Time(17L, 5L)).size(), 1L));
     AssertTrue(Utils.equals(WebSummit.GetWorkshopsAtTime(new Time(6L, 0L)).size(), 0L));
   }
 
+  // DONE
   public void TestRegisterAttendeeToWorkshop() {
 
     WebSummit.RegisterAttendee("Margarida Viterbo");
@@ -235,31 +257,37 @@ public class WebSummitTest extends TestBase {
             ((Workshop) Utils.get(WebSummit.Workshops, "Managing DBs")).Attendees));
   }
 
+  // TODO
   public void TestGetAttendeesOfWorkshop() {
 
     AssertTrue(Utils.equals(WebSummit.GetAttendeesOfWorkshop("Managing DBs").size(), 1L));
   }
 
+  // TODO
   public void TestGetStageOfWorkshop() {
 
     AssertTrue(Utils.equals(WebSummit.GetStageOfWorkshop("Managing DBs").Name, "Secondary Stage"));
   }
 
+  // TODO
   public void TestGetSubjectOfWorkshop() {
 
     AssertTrue(Utils.equals(WebSummit.GetSubjectOfWorkshop("Managing DBs"), "Databases"));
   }
 
+  // TODO
   public void TestGetCompanyOfWorkshop() {
 
     AssertTrue(Utils.equals(WebSummit.GetCompanyOfWorkshop("Managing DBs"), "AWS"));
   }
 
+  // TODO
   public void TestGetWorkshopsInStage() {
 
     AssertTrue(Utils.equals(WebSummit.GetWorkshopsInStage("Secondary Stage").size(), 1L));
   }
 
+  // TODO
   public void TestGetWorkshopsInStageOfDay() {
 
     AssertTrue(
@@ -272,6 +300,7 @@ public class WebSummitTest extends TestBase {
             0L));
   }
 
+  // TODO
   public void TestPublishNewsArcticle() {
 
     WebSummit.PublishNewsArcticle("João Silva", "Title", "Content");
@@ -279,6 +308,7 @@ public class WebSummitTest extends TestBase {
     AssertTrue(Utils.equals(((News) Utils.get(WebSummit.News, "Title")).Content, "Content"));
   }
 
+  // TODO
   public void TestPublishNewsArcticleAboutConf() {
 
     WebSummit.PublishNewsArcticleAboutConf(
@@ -292,16 +322,19 @@ public class WebSummitTest extends TestBase {
             ((News) Utils.get(WebSummit.News, "Title About Money Conf")).Content, "Content"));
   }
 
+  // TODO
   public void TestGetAllNews() {
 
     AssertTrue(Utils.equals(WebSummit.GetAllNews().size(), 2L));
   }
 
+  // TODO
   public void TestGetNewsAboutConf() {
 
     AssertTrue(Utils.equals(WebSummit.GetNewsAboutConf("Money Conf").size(), 1L));
   }
 
+  // TODO
   public void TestGetNewsByAuthor() {
 
     AssertTrue(Utils.equals(WebSummit.GetNewsByAuthor("João Silva").size(), 2L));
