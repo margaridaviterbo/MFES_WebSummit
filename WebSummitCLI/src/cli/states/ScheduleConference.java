@@ -5,35 +5,35 @@ import cli.components.FormField.Type;
 import cli.statemanager.Input;
 import cli.statemanager.State;
 import cli.statemanager.StateManager;
+import cli.statemanager.Input.Key;
 import cli.utils.Term;
 import websummit.Date;
-import cli.statemanager.Input.Key;
 
-public class ScheduleVenue extends State {
+public class ScheduleConference extends State {
 	private Form form = new Form();
 	private boolean done = false;
-
-	public ScheduleVenue(StateManager stateManager) {
+	
+	public ScheduleConference(StateManager stateManager) {
 		super(stateManager);
 	}
 	
-	private void scheduleVenue() {
+	private void scheduleConference() {
+		String stage = form.getValue("Stage");
 		String name = form.getValue("Name");
 		Date startDate = new Date(form.getValue("StartDate"));
 		Date endDate = new Date(form.getValue("EndDate"));
-		Integer rent = Integer.parseInt(form.getValue("Rent"));
-		sm.ws.ScheduleVenue(name, startDate, endDate, rent);
+		sm.ws.ScheduleConference(stage, name, startDate, endDate);
 	}
-	
+
 	@Override
 	public void onEnter() {
 		form = new Form();
 		done = false;
 		
-		form.addField("Name", "What is the name of the venue?", Type.STRING);
-		form.addField("StartDate", "What is the start date (yyyy-MM-dd) ?", Type.DATE);
-		form.addField("EndDate", "What is the end date (yyyy-MM-dd) ?", Type.DATE);
-		form.addField("Rent", "How much have you paid for the booking?", Type.NUMBER);
+		form.addField("Stage", "In which stage should the conference take place?", Type.STRING);
+		form.addField("Name", "What should the name of the conference be?", Type.STRING);
+		form.addField("StartDate", "When should the conference begin (yyyy-MM-dd) ?", Type.DATE);
+		form.addField("EndDate", "When should the conference end (yyyy-MM-dd) ?", Type.DATE);
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class ScheduleVenue extends State {
 		form.handleInput(input);
 		
 		if (form.isDone()) {
-			scheduleVenue();
+			scheduleConference();
 			done = true;
 		}
 	}
@@ -50,9 +50,8 @@ public class ScheduleVenue extends State {
 	@Override
 	public void display() {
 		Term.clear();
-		Term.println("* Main Menu > Venue Management > Schedule Venue");
+		Term.println("* Main Menu > Events Management > Schedule Conference");
 		form.display();
-		if (done) Term.print("Venue scheduled. Press any key to go back.", true);
+		if (done) Term.print("Conference scheduled. Press any key to go back.", true);
 	}
-
 }

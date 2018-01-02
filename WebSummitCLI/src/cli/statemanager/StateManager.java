@@ -22,6 +22,7 @@ public class StateManager {
 	public WebSummit ws = new WebSummit(Utils.copy(TicketStock), Utils.copy(TicketPrice));
 	
 	public void pushState(State state) {
+		state.onEnter();
 		states.push(state);
 	}
 	
