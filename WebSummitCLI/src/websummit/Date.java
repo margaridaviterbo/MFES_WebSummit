@@ -1,5 +1,7 @@
 package websummit;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import org.overture.codegen.runtime.*;
 
@@ -10,10 +12,16 @@ public class Date {
   public Number Year;
 
   public void cg_init_Date_1(final Number d, final Number m, final Number y) {
-
     Day = d;
     Month = m;
     Year = y;
+  }
+  
+  public Date(String date) {
+	  String parts[] = date.split("-");
+	  cg_init_Date_1(Integer.parseInt(parts[2]), 
+			  Integer.parseInt(parts[1]), 
+			  Integer.parseInt(parts[0]));
   }
 
   public Date(final Number d, final Number m, final Number y) {
