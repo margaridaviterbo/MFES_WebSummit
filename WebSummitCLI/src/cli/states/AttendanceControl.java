@@ -14,6 +14,7 @@ public class AttendanceControl extends State {
 		super(stateManager);
 		
 		menu.addOption("Register ticket sale", new RegisterTicketSale(sm));
+		menu.addOption("Register attendee", new RegisterAttendee(sm));
 	}
 
 	@Override
