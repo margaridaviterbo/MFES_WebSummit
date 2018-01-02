@@ -33,6 +33,8 @@ public abstract class State {
 		return inputs.remove();
 	}
 	
+	public void onEnter() {}
+	
 	public abstract void handleInput(Input input);
 	
 	public abstract void display();

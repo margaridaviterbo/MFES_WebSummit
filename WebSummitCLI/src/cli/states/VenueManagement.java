@@ -14,6 +14,7 @@ public class VenueManagement extends State {
 		super(stateManager);
 		
 		menu.addOption("Schedule a venue", new ScheduleVenue(sm));
+		menu.addOption("Add Stage", new AddStage(sm));
 	}
 
 	@Override
