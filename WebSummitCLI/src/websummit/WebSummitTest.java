@@ -308,7 +308,7 @@ public class WebSummitTest extends TestBase {
     AssertTrue(Utils.equals(((News) Utils.get(WebSummit.News, "Title")).Content, "Content"));
   }
 
-  // TODO
+  // DONE
   public void TestPublishNewsArcticleAboutConf() {
 
     WebSummit.PublishNewsArcticleAboutConf(

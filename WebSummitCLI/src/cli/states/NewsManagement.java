@@ -15,6 +15,7 @@ public class NewsManagement extends State {
 		super(stateManager);
 		
 		menu.addOption("Publish news about the event", new PublishNewsAboutEvent(sm));
+		menu.addOption("Publish news about a conference", new PublishNewsAboutConference(sm));
 	}
 	
 	@Override
