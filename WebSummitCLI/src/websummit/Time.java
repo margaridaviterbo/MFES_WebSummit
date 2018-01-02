@@ -14,6 +14,11 @@ public class Time {
     Minutes = minutes;
     return;
   }
+  
+  public Time(String time) {
+	  String[] parts = time.split(":");
+	  cg_init_Time_1(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+  }
 
   public Time(final Number hours, final Number minutes) {
 

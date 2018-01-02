@@ -14,6 +14,7 @@ public class EventsManagement extends State {
 		super(stateManager);
 		
 		menu.addOption("Schedule conference", new ScheduleConference(sm));
+		menu.addOption("Schedule talk", new ScheduleTalk(sm));
 	}
 
 	@Override

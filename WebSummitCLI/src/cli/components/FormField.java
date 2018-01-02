@@ -43,7 +43,7 @@ public class FormField {
 	}
 	
 	private static final boolean isValidTime(String val) {
-		SimpleDateFormat parser = new SimpleDateFormat("HH:mm:ss");
+		SimpleDateFormat parser = new SimpleDateFormat("HH:mm");
 		try {
 			parser.parse(val);
 		} catch (ParseException e) {
