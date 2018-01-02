@@ -7,15 +7,13 @@ import cli.statemanager.StateManager;
 import cli.statemanager.Input.Key;
 import cli.utils.Term;
 
-public class EventsManagement extends State {
+public class AttendanceControl extends State {
 	private Menu menu = new Menu(sm);
 
-	public EventsManagement(StateManager stateManager) {
+	public AttendanceControl(StateManager stateManager) {
 		super(stateManager);
 		
-		menu.addOption("Schedule conference", new ScheduleConference(sm));
-		menu.addOption("Schedule talk", new ScheduleTalk(sm));
-		menu.addOption("Schedule workshop", new ScheduleWorkshop(sm));
+		menu.addOption("Register ticket sale", new RegisterTicketSale(sm));
 	}
 
 	@Override
@@ -27,7 +25,7 @@ public class EventsManagement extends State {
 	@Override
 	public void display() {
 		Term.clear();
-		Term.println("* Main Menu > Events Management");
+		Term.println("* Main Menu > Attendance Control");
 		menu.display();
 	}
 }
