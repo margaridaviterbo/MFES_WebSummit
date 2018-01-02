@@ -300,7 +300,7 @@ public class WebSummitTest extends TestBase {
             0L));
   }
 
-  // TODO
+  // DONE
   public void TestPublishNewsArcticle() {
 
     WebSummit.PublishNewsArcticle("João Silva", "Title", "Content");
