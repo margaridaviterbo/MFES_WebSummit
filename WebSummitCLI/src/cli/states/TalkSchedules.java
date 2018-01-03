@@ -7,16 +7,17 @@ import cli.statemanager.StateManager;
 import cli.statemanager.Input.Key;
 import cli.utils.Term;
 
-public class VenueManagement extends State {
+public class TalkSchedules extends State {
 	private Menu menu = new Menu(sm);
-	
-	public VenueManagement(StateManager stateManager) {
+
+	public TalkSchedules(StateManager stateManager) {
 		super(stateManager);
 		
-		menu.addOption("Schedule a venue", new ScheduleVenue(sm));
-		menu.addOption("Add Stage", new AddStage(sm));
-		menu.addOption("View all venues", new AllVenues(sm));
-		menu.addOption("View all stages", new AllStages(sm));
+		menu.addOption("View all talks", new AllTalks(sm));
+		menu.addOption("View talks by day", new TalksByDay(sm));
+		menu.addOption("View talks by time", new TalksByTime(sm));
+		menu.addOption("View talks by speaker", new TalksBySpeaker(sm));
+		menu.addOption("View talks by conference and day", new TalksByConferenceAndDay(sm));
 	}
 
 	@Override
@@ -28,7 +29,7 @@ public class VenueManagement extends State {
 	@Override
 	public void display() {
 		Term.clear();
-		Term.println("* Main Menu > Venue Management");
+		Term.println("* Main Menu > Schedule > Talks");
 		menu.display();
 	}
 }

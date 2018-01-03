@@ -7,16 +7,16 @@ import cli.statemanager.StateManager;
 import cli.statemanager.Input.Key;
 import cli.utils.Term;
 
-public class VenueManagement extends State {
+public class ConferenceSchedules extends State {
 	private Menu menu = new Menu(sm);
-	
-	public VenueManagement(StateManager stateManager) {
+
+	public ConferenceSchedules(StateManager stateManager) {
 		super(stateManager);
 		
-		menu.addOption("Schedule a venue", new ScheduleVenue(sm));
-		menu.addOption("Add Stage", new AddStage(sm));
-		menu.addOption("View all venues", new AllVenues(sm));
-		menu.addOption("View all stages", new AllStages(sm));
+		menu.addOption("View all conferences", new AllConferences(sm));
+		menu.addOption("View conferences by day", new ConferencesByDay(sm));
+		menu.addOption("View conferences by stage", new ConferencesByStage(sm));
+		menu.addOption("View conferences by stage and day", new ConferencesByStageAndDay(sm));
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class VenueManagement extends State {
 	@Override
 	public void display() {
 		Term.clear();
-		Term.println("* Main Menu > Venue Management");
+		Term.println("* Main Menu > Schedule > Conferences");
 		menu.display();
 	}
 }

@@ -3,6 +3,10 @@ package cli.components;
 import cli.utils.Term;
 
 public class TableCell {
+	public static final int SMALL = 20;
+	public static final int MEDIUM = 40;
+	public static final int LARGE = 80;
+	
 	private String value;
 	
 	public TableCell(String val, int width) {

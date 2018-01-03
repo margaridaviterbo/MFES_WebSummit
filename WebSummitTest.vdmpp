@@ -519,5 +519,24 @@ operations
      WebSummit.GetCompanyOfWorkshop("Cooking");
   );
 	
+	-- Trying to publish a news article with a bad author
+	public TestPublishNewsArticleBadAuthor: () ==> ()
+	TestPublishNewsArticleBadAuthor() == (
+		WebSummit.PublishNewsArcticle("João Silva", "Title", "Content");
+	);
 	
+	-- Trying to publish news article with the same title
+	public TestPublishNewsArticleSameTitle: () ==> ()
+	TestPublishNewsArticleSameTitle() == (
+		WebSummit.SellTicket("João Silva", <Attendee>);
+		WebSummit.PublishNewsArcticle("João Silva", "Title", "Content");
+		WebSummit.PublishNewsArcticle("João Silva", "Title", "Another");
+	);
+	
+	-- Trying to publish news article about non existing conference
+	public TestPublishNewsArticleBadConference: () ==> ()
+	TestPublishNewsArticleBadConference() == (
+		WebSummit.SellTicket("João Silva", <Attendee>);
+		WebSummit.PublishNewsArcticleAboutConf("João Silva", "Title", "Content", "Conf");
+	);
 end WebSummitTest
