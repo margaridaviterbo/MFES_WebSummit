@@ -115,7 +115,7 @@ public class WebSummitTest extends TestBase {
     AssertTrue(Utils.equals(WebSummit.GetConferenceStage("Money Conf").Name, "Main Stage"));
   }
 
-  // TODO
+  // DONE
   public void TestGetConferencesInStage() {
 
     AssertTrue(Utils.equals(WebSummit.GetConferencesInStage("Main Stage").size(), 2L));
@@ -163,13 +163,13 @@ public class WebSummitTest extends TestBase {
             "Future Societies"));
   }
 
-  // TODO
+  // DONE
   public void TestGetTalksOfDay() {
 
     AssertTrue(Utils.equals(WebSummit.GetTalksOfDay(new Date(4L, 11L, 2017L)).size(), 2L));
   }
 
-  // TODO
+  // DONE
   public void TestGetTalksAtTime() {
 
     AssertTrue(
@@ -180,7 +180,7 @@ public class WebSummitTest extends TestBase {
             WebSummit.GetTalksAtTime(new Date(4L, 11L, 2017L), new Time(17L, 3L)).size(), 0L));
   }
 
-  // TODO
+  // DONE
   public void TestGetTalksOfSpeaker() {
 
     AssertTrue(Utils.equals(WebSummit.GetTalksOfSpeaker("João Silva").size(), 1L));
@@ -188,7 +188,7 @@ public class WebSummitTest extends TestBase {
     AssertTrue(Utils.equals(WebSummit.GetTalksOfSpeaker("Joana Viterbo").size(), 0L));
   }
 
-  // TODO
+  // DONE
   public void TestGetConferenceTalksOfDay() {
 
     AssertTrue(

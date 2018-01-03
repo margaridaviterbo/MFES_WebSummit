@@ -7,14 +7,17 @@ import cli.statemanager.StateManager;
 import cli.statemanager.Input.Key;
 import cli.utils.Term;
 
-public class Schedule extends State {
+public class TalkSchedules extends State {
 	private Menu menu = new Menu(sm);
-	
-	public Schedule(StateManager stateManager) {
+
+	public TalkSchedules(StateManager stateManager) {
 		super(stateManager);
 		
-		menu.addOption("Conferences", new ConferenceSchedules(sm));
-		menu.addOption("Talks", new TalkSchedules(sm));
+		menu.addOption("View all talks", new AllTalks(sm));
+		menu.addOption("View talks by day", new TalksByDay(sm));
+		menu.addOption("View talks by time", new TalksByTime(sm));
+		menu.addOption("View talks by speaker", new TalksBySpeaker(sm));
+		menu.addOption("View talks by conference and day", new TalksByConferenceAndDay(sm));
 	}
 
 	@Override
@@ -26,7 +29,7 @@ public class Schedule extends State {
 	@Override
 	public void display() {
 		Term.clear();
-		Term.println("* Main Menu > Schedule");
+		Term.println("* Main Menu > Schedule > Talks");
 		menu.display();
 	}
 }
