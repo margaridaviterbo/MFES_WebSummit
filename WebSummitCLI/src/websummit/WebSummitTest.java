@@ -218,21 +218,21 @@ public class WebSummitTest extends TestBase {
     AssertTrue(Utils.equals(MapUtil.dom(WebSummit.Workshops).size(), 1L));
   }
 
-  // TODO
+  // DONE
   public void TestGetAllWorkshops() {
 
     VDMSet workshops = WebSummit.GetAllWorkshops();
     AssertTrue(Utils.equals(workshops.size(), 1L));
   }
 
-  // TODO
+  // DONE
   public void TestGetWorkshopsOfDay() {
 
     AssertTrue(Utils.equals(WebSummit.GetWorkshopsOfDay(new Date(4L, 11L, 2017L)).size(), 1L));
     AssertTrue(Utils.equals(WebSummit.GetWorkshopsOfDay(new Date(5L, 11L, 2018L)).size(), 0L));
   }
 
-  // TODO
+  // DONE
   public void TestGetWorkshopsAtTime() {
 
     AssertTrue(Utils.equals(WebSummit.GetWorkshopsAtTime(new Time(17L, 5L)).size(), 1L));
@@ -281,13 +281,13 @@ public class WebSummitTest extends TestBase {
     AssertTrue(Utils.equals(WebSummit.GetCompanyOfWorkshop("Managing DBs"), "AWS"));
   }
 
-  // TODO
+  // DONE
   public void TestGetWorkshopsInStage() {
 
     AssertTrue(Utils.equals(WebSummit.GetWorkshopsInStage("Secondary Stage").size(), 1L));
   }
 
-  // TODO
+  // DONE
   public void TestGetWorkshopsInStageOfDay() {
 
     AssertTrue(

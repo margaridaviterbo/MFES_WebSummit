@@ -12,43 +12,38 @@ import cli.statemanager.State;
 import cli.statemanager.StateManager;
 import cli.statemanager.Input.Key;
 import cli.utils.Term;
+import websummit.Conference;
 import websummit.Date;
-import websummit.Talk;
-import websummit.Time;
 
-public class TalksByTime extends State {
+public class ConferencesByStageAndDay extends State {
 	private Form form = new Form();
 	private Table table = new Table();
 	
-	public TalksByTime(StateManager stateManager) {
+	public ConferencesByStageAndDay(StateManager stateManager) {
 		super(stateManager);
 	}
 	
 	private void buildTable() {
 		table = new Table();
 		
-		Date date = new Date(form.getValue("Date"));
-		Time time = new Time(form.getValue("Time"));
-
+		String stage = form.getValue("Stage");
+		Date day = new Date(form.getValue("Day"));
+		
 		TableRow header = new TableRow(true);
-		header.addCell("Title", TableCell.MEDIUM);
-		header.addCell("Speaker", TableCell.SMALL);
-		header.addCell("Conference", TableCell.SMALL);
-		header.addCell("Date", TableCell.SMALL);
+		header.addCell("Name", TableCell.MEDIUM);
+		header.addCell("Stage", TableCell.SMALL);
 		header.addCell("Start", TableCell.SMALL);
 		header.addCell("End", TableCell.SMALL);
 		table.addRow(header);
 	
-		VDMSet talks = sm.ws.GetTalksAtTime(date, time);
-		for (Object obj : talks) {
-			Talk talk = (Talk) obj;
+		VDMSet conferences = sm.ws.GetConferencesInStageOfDay(stage, day);
+		for (Object obj : conferences) {
+			Conference conf = (Conference) obj;
 			TableRow row = new TableRow();
-			row.addCell(talk.Title, TableCell.MEDIUM);
-			row.addCell(talk.Speaker, TableCell.SMALL);
-			row.addCell(talk.Conference, TableCell.SMALL);
-			row.addCell(talk.Date.toString(), TableCell.SMALL);
-			row.addCell(talk.Start.toString(), TableCell.SMALL);
-			row.addCell(talk.End.toString(), TableCell.SMALL);
+			row.addCell(conf.Name, TableCell.MEDIUM);
+			row.addCell(conf.Stage, TableCell.SMALL);
+			row.addCell(conf.Start.toString(), TableCell.SMALL);
+			row.addCell(conf.End.toString(), TableCell.SMALL);
 			table.addRow(row);
 		}
 	}
@@ -56,8 +51,8 @@ public class TalksByTime extends State {
 	@Override
 	public void onEnter() {
 		form = new Form();
-		form.addField("Date", "What day should the talks happen in (yyyy-MM-dd) ?", Type.DATE);
-		form.addField("Time", "What time should the talks be happening at (HH:mm) ?", Type.TIME);
+		form.addField("Stage", "In what stage should the conferences be happening in?", Type.STRING);
+		form.addField("Day", "What day should the conferences happen in (yyyy-MM-dd) ?", Type.DATE);
 	}
 
 	@Override
@@ -72,7 +67,7 @@ public class TalksByTime extends State {
 	@Override
 	public void display() {
 		Term.clear();
-		Term.println("* Main Menu > Schedule > Talks > Talks By Time");
+		Term.println("* Main Menu > Schedule > Conferences > Conferences By Stage and Day");
 		if (!form.isDone()) form.display();
 		else table.display();
 	}

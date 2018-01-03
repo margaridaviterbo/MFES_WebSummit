@@ -15,6 +15,7 @@ public class Schedule extends State {
 		
 		menu.addOption("Conferences", new ConferenceSchedules(sm));
 		menu.addOption("Talks", new TalkSchedules(sm));
+		menu.addOption("Workshops", new WorkshopSchedules(sm));
 	}
 
 	@Override

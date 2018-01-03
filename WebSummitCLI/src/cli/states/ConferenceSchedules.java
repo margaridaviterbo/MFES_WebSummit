@@ -16,6 +16,7 @@ public class ConferenceSchedules extends State {
 		menu.addOption("View all conferences", new AllConferences(sm));
 		menu.addOption("View conferences by day", new ConferencesByDay(sm));
 		menu.addOption("View conferences by stage", new ConferencesByStage(sm));
+		menu.addOption("View conferences by stage and day", new ConferencesByStageAndDay(sm));
 	}
 
 	@Override

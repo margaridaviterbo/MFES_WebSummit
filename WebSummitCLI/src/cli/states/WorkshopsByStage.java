@@ -12,43 +12,44 @@ import cli.statemanager.State;
 import cli.statemanager.StateManager;
 import cli.statemanager.Input.Key;
 import cli.utils.Term;
-import websummit.Date;
-import websummit.Talk;
-import websummit.Time;
+import websummit.Workshop;
 
-public class TalksByTime extends State {
+public class WorkshopsByStage extends State {
 	private Form form = new Form();
 	private Table table = new Table();
 	
-	public TalksByTime(StateManager stateManager) {
+	public WorkshopsByStage(StateManager stateManager) {
 		super(stateManager);
 	}
 	
 	private void buildTable() {
 		table = new Table();
 		
-		Date date = new Date(form.getValue("Date"));
-		Time time = new Time(form.getValue("Time"));
+		String stage = form.getValue("Stage");
 
 		TableRow header = new TableRow(true);
-		header.addCell("Title", TableCell.MEDIUM);
-		header.addCell("Speaker", TableCell.SMALL);
-		header.addCell("Conference", TableCell.SMALL);
+		header.addCell("Name", TableCell.SMALL);
+		header.addCell("Subject", TableCell.SMALL);
+		header.addCell("Company", TableCell.SMALL);
+		header.addCell("Stage", TableCell.SMALL);
+		header.addCell("Vacancies", TableCell.SMALL);
 		header.addCell("Date", TableCell.SMALL);
 		header.addCell("Start", TableCell.SMALL);
 		header.addCell("End", TableCell.SMALL);
 		table.addRow(header);
 	
-		VDMSet talks = sm.ws.GetTalksAtTime(date, time);
-		for (Object obj : talks) {
-			Talk talk = (Talk) obj;
+		VDMSet workshops = sm.ws.GetWorkshopsInStage(stage);
+		for (Object obj : workshops) {
+			Workshop workshop = (Workshop) obj;
 			TableRow row = new TableRow();
-			row.addCell(talk.Title, TableCell.MEDIUM);
-			row.addCell(talk.Speaker, TableCell.SMALL);
-			row.addCell(talk.Conference, TableCell.SMALL);
-			row.addCell(talk.Date.toString(), TableCell.SMALL);
-			row.addCell(talk.Start.toString(), TableCell.SMALL);
-			row.addCell(talk.End.toString(), TableCell.SMALL);
+			row.addCell(workshop.Name, TableCell.SMALL);
+			row.addCell(workshop.Subject, TableCell.SMALL);
+			row.addCell(workshop.Company, TableCell.SMALL);
+			row.addCell(workshop.Stage, TableCell.SMALL);
+			row.addCell(workshop.Vacancies.toString(), TableCell.SMALL);
+			row.addCell(workshop.Date.toString(), TableCell.SMALL);
+			row.addCell(workshop.Start.toString(), TableCell.SMALL);
+			row.addCell(workshop.End.toString(), TableCell.SMALL);
 			table.addRow(row);
 		}
 	}
@@ -56,8 +57,7 @@ public class TalksByTime extends State {
 	@Override
 	public void onEnter() {
 		form = new Form();
-		form.addField("Date", "What day should the talks happen in (yyyy-MM-dd) ?", Type.DATE);
-		form.addField("Time", "What time should the talks be happening at (HH:mm) ?", Type.TIME);
+		form.addField("Stage", "In what stage should the workshops be happening?", Type.STRING);
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class TalksByTime extends State {
 	@Override
 	public void display() {
 		Term.clear();
-		Term.println("* Main Menu > Schedule > Talks > Talks By Time");
+		Term.println("* Main Menu > Schedule > Workshops > Workshops By Stage");
 		if (!form.isDone()) form.display();
 		else table.display();
 	}
