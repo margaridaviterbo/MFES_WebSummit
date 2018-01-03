@@ -7,27 +7,27 @@ import cli.statemanager.StateManager;
 import cli.statemanager.Input.Key;
 import cli.utils.Term;
 
-public class EventsManagement extends State {
+public class NewsManagement extends State {
 	private Menu menu = new Menu(sm);
-
-	public EventsManagement(StateManager stateManager) {
+	
+	public NewsManagement(StateManager stateManager) {
 		super(stateManager);
 		
-		menu.addOption("Schedule conference", new ScheduleConference(sm));
-		menu.addOption("Schedule talk", new ScheduleTalk(sm));
-		menu.addOption("Schedule workshop", new ScheduleWorkshop(sm));
+		menu.addOption("Publish news about the event", new PublishNewsAboutEvent(sm));
+		menu.addOption("Publish news about a conference", new PublishNewsAboutConference(sm));
+		menu.addOption("Read all news", new ReadAllNews(sm));
 	}
-
+	
 	@Override
 	public void handleInput(Input input) {
-		menu.handleInput(input);
 		if (input.getType() == Key.ESCAPE) sm.popState();
+		menu.handleInput(input);
 	}
 
 	@Override
 	public void display() {
 		Term.clear();
-		Term.println("* Main Menu > Events Management");
+		Term.println("* Main Menu > News Management");
 		menu.display();
 	}
 }

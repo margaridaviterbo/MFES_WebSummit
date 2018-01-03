@@ -34,6 +34,10 @@ public class Form {
 		return fields.get(key).getValue();
 	}
 	
+	public FormField getField(String key) {
+		return fields.get(key);
+	}
+	
 	public void handleInput(Input input) {
 		if (isDone()) return;
 		FormField currentField = fields.get(lookup.get(field));

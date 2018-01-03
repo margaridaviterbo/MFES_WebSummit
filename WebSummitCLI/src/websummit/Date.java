@@ -19,9 +19,11 @@ public class Date {
   
   public Date(String date) {
 	  String parts[] = date.split("-");
-	  cg_init_Date_1(Integer.parseInt(parts[2]), 
-			  Integer.parseInt(parts[1]), 
-			  Integer.parseInt(parts[0]));
+	  try {
+		cg_init_Date_1(Integer.parseInt(parts[2]), 
+				  Integer.parseInt(parts[1]), 
+				  Integer.parseInt(parts[0]));
+	} catch (NumberFormatException e) {}
   }
 
   public Date(final Number d, final Number m, final Number y) {
