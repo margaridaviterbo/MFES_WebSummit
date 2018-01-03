@@ -13,36 +13,34 @@ import cli.statemanager.Input.Key;
 import cli.utils.Term;
 import websummit.News;
 
-public class ReadNewsAboutConference extends State {
-	private static final int widths[] = { 20, 20, 30, 80 }; 
+public class ReadNewsByAuthor extends State {
+	private static final int widths[] = { 20, 30, 80 }; 
 
 	private Form form = new Form();
 	private Table table = new Table();
 	
-	public ReadNewsAboutConference(StateManager stateManager) {
+	public ReadNewsByAuthor(StateManager stateManager) {
 		super(stateManager);
 	}
 	
 	private void buildTable() {
 		table = new Table();
 		
-		String conf = form.getValue("Conf");
+		String author = form.getValue("Author");
 		
 		TableRow header = new TableRow(true);
 		header.addCell("Author", widths[0]);
-		header.addCell("Conference", widths[1]);
-		header.addCell("Title", widths[2]);
-		header.addCell("Content", widths[3]);
+		header.addCell("Title", widths[1]);
+		header.addCell("Content", widths[2]);
 		table.addRow(header);
 	
-		VDMSet news = sm.ws.GetNewsAboutConf(conf);
+		VDMSet news = sm.ws.GetNewsByAuthor(author);
 		for (Object obj : news) {
 			News article = (News) obj;
 			TableRow row = new TableRow();
 			row.addCell(article.Author, widths[0]);
-			row.addCell(article.Conference, widths[1]);
-			row.addCell(article.Title, widths[2]);
-			row.addCell(article.Content, widths[3]);
+			row.addCell(article.Title, widths[1]);
+			row.addCell(article.Content, widths[2]);
 			table.addRow(row);
 		}
 	}
@@ -50,7 +48,7 @@ public class ReadNewsAboutConference extends State {
 	@Override
 	public void onEnter() {
 		form = new Form();
-		form.addField("Conf", "What is the name of the conference?", Type.STRING);
+		form.addField("Author", "What is the name of the author?", Type.STRING);
 	}
 
 	@Override
@@ -65,7 +63,7 @@ public class ReadNewsAboutConference extends State {
 	@Override
 	public void display() {
 		Term.clear();
-		Term.println("* Main Menu > News Management > Read News About Conference");
+		Term.println("* Main Menu > News Management > Read News By Author");
 		if (!form.isDone()) form.display();
 		else table.display();
 	}
