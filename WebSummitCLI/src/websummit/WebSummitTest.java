@@ -100,7 +100,7 @@ public class WebSummitTest extends TestBase {
             ((Conference) Utils.get(WebSummit.Conferences, "Money Conf")).Stage, "Main Stage"));
   }
 
-  // TODO
+  // DONE
   public void TestGetConferencesOfDay() {
 
     AssertTrue(Utils.equals(WebSummit.GetConferencesOfDay(new Date(4L, 11L, 2017L)).size(), 1L));
