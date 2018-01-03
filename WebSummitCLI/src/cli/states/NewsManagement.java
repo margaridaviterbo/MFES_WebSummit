@@ -1,6 +1,5 @@
 package cli.states;
 
-import cli.Main;
 import cli.components.Menu;
 import cli.statemanager.Input;
 import cli.statemanager.State;
@@ -16,11 +15,12 @@ public class NewsManagement extends State {
 		
 		menu.addOption("Publish news about the event", new PublishNewsAboutEvent(sm));
 		menu.addOption("Publish news about a conference", new PublishNewsAboutConference(sm));
+		menu.addOption("Read all news", new ReadAllNews(sm));
 	}
 	
 	@Override
 	public void handleInput(Input input) {
-		if (input.getType() == Key.ESCAPE) Main.running = false;
+		if (input.getType() == Key.ESCAPE) sm.popState();
 		menu.handleInput(input);
 	}
 

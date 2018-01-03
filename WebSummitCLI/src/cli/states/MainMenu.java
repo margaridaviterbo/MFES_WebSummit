@@ -17,8 +17,6 @@ public class MainMenu extends State {
 		menu.addOption("Events management", new EventsManagement(sm));
 		menu.addOption("Attendance control", new AttendanceControl(sm));
 		menu.addOption("News management", new NewsManagement(sm));
-		/*menu.addOption("Schedule information", new MainMenu(sm));
-		menu.addOption("News arcticles", new MainMenu(sm)); */
 	}
 	
 	@Override
