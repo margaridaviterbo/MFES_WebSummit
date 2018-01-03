@@ -15,6 +15,8 @@ public class VenueManagement extends State {
 		
 		menu.addOption("Schedule a venue", new ScheduleVenue(sm));
 		menu.addOption("Add Stage", new AddStage(sm));
+		menu.addOption("View all venues", new AllVenues(sm));
+		menu.addOption("View all stages", new AllStages(sm));
 	}
 
 	@Override
