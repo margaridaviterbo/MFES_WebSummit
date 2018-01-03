@@ -1,3 +1,9 @@
+/*
+ * The purpose of the Workshop class is to represent a interactive learning session hosted
+ * by companies during the event.
+ * Workshops are identified by their name, and occur in a stage. Additionaly, they are hosted
+ * by a company during a specific schedule and have limited vacancies.
+ */
 class Workshop
 types
   public WorkshopName = seq1 of char;

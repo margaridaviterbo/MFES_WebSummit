@@ -1,3 +1,8 @@
+/*
+ * Time is a utility class to represent a specific time.
+ * Some utility methods are also provided to aid with time comparison for the
+ * purpose of allocating times for talks during conferences.
+ */
 class Time
 instance variables
 	public Hours: nat;

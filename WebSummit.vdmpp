@@ -1,3 +1,8 @@
+/*
+ * The WebSummit class represents the event and holds all the information about it.
+ * It's purpose is to allow a user to manage and track all of the logistics operations
+ * that are necessary to organize and run the event.
+ */
 class WebSummit
 types
 	public WSAccount = seq of Transaction;
@@ -32,66 +37,14 @@ operations
 		TicketPrice := price;
 		return self
 	);
-
-	-- Sell a ticket 
-	public SellTicket: User`UserName * WSTicketType ==> ()
-	SellTicket(name, ticket) == (
-		TicketStock(ticket) := TicketStock(ticket) - 1;
-		Account := [new Transaction(TicketPrice(ticket))] ^ Account;
-		Attendees := Attendees ++ { name |-> new User(name, ticket)};
-	)
-	pre not ticket = <Volunteer> and TicketStock(ticket) > 0
-	post (
-		card dom Attendees >= card dom Attendees~ 
-		and TicketStock(ticket) = TicketStock~(ticket) - 1 
-		and len Account = len Account~ + 1
-	);
-
-	-- Retrieve the account balance
-	public GetAccountBalance: () ==> int
-	GetAccountBalance() == (
-		return new Utils().SumSeq([t.Amount | t in seq Account]);
-	);
 	
-	-- Register an attendee
-	public RegisterAttendee: User`UserName ==> ()
-	RegisterAttendee(name) == (
-		Attendees(name).State := <Registered>
-	)
-	pre Attendees(name).State = <Unregistered>
-	post Attendees(name).State = <Registered>;
-	
-	-- Add a potential volunteer to the waiting list
-	public AddToWaitingList: User`UserName ==> ()
-	AddToWaitingList(name) == (
-		 WaitingList := WaitingList union { name }
-	)
-	pre name not in set dom Attendees
-	post card WaitingList >= card WaitingList~;
-	
-	-- Accept a volunteer from the waiting list
-	public AcceptVolunteer: User`UserName ==> ()
-	AcceptVolunteer(name) == (
-		Attendees := Attendees ++ { name |-> new User(name, <Volunteer>)}
-	)
-	pre name in set WaitingList and name not in set dom Attendees
-	post name in set dom Attendees;
-	
-	-- Get the total number of ticket holders (volunteers included)
-	public GetNumberOfAttendees: () ==> nat
-	GetNumberOfAttendees() == ( 
-		return card dom Attendees;
-	)
-	post RESULT = card dom Attendees;
-	
-	-- Get the actual total number of attendees (volunteers included)
-	public GetNumberOfRegisteredAttendees: () ==> nat
-	GetNumberOfRegisteredAttendees() == (
-		return card { user | user in set rng Attendees & user.State = <Registered> };
-	)
-	post RESULT = card { user | user in set rng Attendees & user.State = <Registered>};
-	
-	-- Schedule a venue for the event
+	/* 
+	 * The operations below relate to this requirement:
+	 *
+	 * R01: Organizers should be able to book venues and layout the stages in each venue
+	 */
+	 
+	 	-- Schedule a venue for the event
 	public ScheduleVenue: Venue`VenueName * Date * Date * nat ==> ()
 	ScheduleVenue(name, startDate, endDate, rent) == (
 		Account := [new Transaction(-rent)] ^ Account;
@@ -106,6 +59,12 @@ operations
 	)
 	pre venue in set dom Venues and name not in set dom Stages
 	post name in set dom Stages and card dom Stages > card dom Stages~;
+	 
+	/*
+	 * The operations below relate to this requirement:
+	 * 
+	 * R02: Organizers should be able to schedule conferences, talks, and workshops and assign each to a stage 
+	 */
 	
 	-- Schedule a conference 
 	public ScheduleConference: Stage`StageName * Conference`ConfName * Date * Date ==> ()
@@ -135,6 +94,135 @@ operations
 	post (
 		title in set dom Talks
 	);
+	
+	-- Schedule a workshop
+	public ScheduleWorkshop: Workshop`WorkshopName * Workshop`WorkshopSubject * Stage`StageName * Workshop`WorkshopCompany * Date * Time * Time * nat ==> ()
+	ScheduleWorkshop(name, subject, stage, company, date, startTime, endTime, vacancies) == (
+ 		Workshops := Workshops ++ { name |-> new Workshop(name, subject, stage, company, date, startTime, endTime, vacancies) }
+	)
+	pre (
+	 	name not in set dom Workshops
+	 	and stage in set dom Stages
+	 	and date.IsLaterThan(Stages(stage).Start)
+	 	and date.IsEarlierThan(Stages(stage).End)
+	 	and Stages(stage).IsFree(date, startTime, endTime, Conferences, Workshops)
+	)
+	post name in set dom Workshops and card dom Workshops > card dom Workshops~;
+	  
+	/*
+	 * The operations below relate to this requirement:
+	 * 
+	 * R03: Staff members should be able to sell tickets to potential attendees
+	 */
+	  
+	-- Sell a ticket 
+	public SellTicket: User`UserName * WSTicketType ==> ()
+	SellTicket(name, ticket) == (
+		TicketStock(ticket) := TicketStock(ticket) - 1;
+		Account := [new Transaction(TicketPrice(ticket))] ^ Account;
+		Attendees := Attendees ++ { name |-> new User(name, ticket)};
+	)
+	pre not ticket = <Volunteer> and TicketStock(ticket) > 0
+	post (
+		card dom Attendees >= card dom Attendees~ 
+		and TicketStock(ticket) = TicketStock~(ticket) - 1 
+		and len Account = len Account~ + 1
+	);
+	  
+	/*
+	 * The operations below relate to this requirement:
+	 * 
+	 * R04: Staff members should be able to register attendance at the event and at the event’s workshops
+	 */
+	
+	-- Register an attendee
+	public RegisterAttendee: User`UserName ==> ()
+	RegisterAttendee(name) == (
+		Attendees(name).State := <Registered>
+	)
+	pre Attendees(name).State = <Unregistered>
+	post Attendees(name).State = <Registered>;
+	
+	-- Add a potential volunteer to the waiting list
+	public AddToWaitingList: User`UserName ==> ()
+	AddToWaitingList(name) == (
+		 WaitingList := WaitingList union { name }
+	)
+	pre name not in set dom Attendees
+	post card WaitingList >= card WaitingList~; 
+	
+	-- Accept a volunteer from the waiting list
+	public AcceptVolunteer: User`UserName ==> ()
+	AcceptVolunteer(name) == (
+		Attendees := Attendees ++ { name |-> new User(name, <Volunteer>)}
+	)
+	pre name in set WaitingList and name not in set dom Attendees
+	post name in set dom Attendees;
+	
+	-- Get the total number of ticket holders (volunteers included)
+	public GetNumberOfAttendees: () ==> nat
+	GetNumberOfAttendees() == ( 
+		return card dom Attendees;
+	)
+	post RESULT = card dom Attendees;
+	
+	-- Get the actual total number of attendees (volunteers included)
+	public GetNumberOfRegisteredAttendees: () ==> nat
+	GetNumberOfRegisteredAttendees() == (
+		return card { user | user in set rng Attendees & user.State = <Registered> };
+	)
+	post RESULT = card { user | user in set rng Attendees & user.State = <Registered>};
+	
+	--Register attendee to one workshop
+	public RegisterAttendeeToWorkshop: User`UserName * Workshop`WorkshopName ==> ()
+	RegisterAttendeeToWorkshop(user, workshop) == (
+		Workshops(workshop).Attendees := Workshops(workshop).Attendees union { user }
+	)
+	pre (
+	 	card Workshops(workshop).Attendees < Workshops(workshop).Vacancies
+	 	and user not in set Workshops(workshop).Attendees
+	 	and user in set dom Attendees
+	 	and Attendees(user).State = <Registered>
+	)
+	post (
+	  user in set Workshops(workshop).Attendees
+	  and card Workshops(workshop).Attendees = card Workshops~(workshop).Attendees + 1 
+	);
+	
+	/*
+	 * The operations below relate to this requirement:
+	 * 
+	 * R05: Staff members should be able to publish news articles about the event and the event’s conferences
+	 */
+	
+	-- Publish a news arcticle about the event
+	public PublishNewsArcticle: User`UserName * News`NewsTitle * News`NewsContent ==> ()
+	PublishNewsArcticle(author, title, content) == (
+		News := News ++ { title |-> new News(author, title, content) }
+	)
+	pre (
+		author in set dom Attendees
+		and title not in set dom News
+	)
+	post title in set dom News and card dom News > card dom News~;
+	
+	-- Publish a news arcticle about a conference
+	public PublishNewsArcticleAboutConf: User`UserName * News`NewsTitle * News`NewsContent * Conference`ConfName ==> ()
+	PublishNewsArcticleAboutConf(author, title, content, conf) == (
+		News := News ++ { title |-> new News(author, title, content, conf) } 
+	)
+	pre (
+		author in set dom Attendees
+		and conf in set dom Conferences
+		and title not in set dom News
+	)
+	post title in set dom News and card dom News > card dom News~;
+	  
+	/*
+	 * The operations below relate to this requirement:
+	 * 
+	 * R06: Users should be able to access information about the conferences, talks, and workshops
+	 */
 	
 	-- Retrieve all the talks from a specific day
 	public GetTalksOfDay: Date ==> set of Talk
@@ -177,36 +265,6 @@ operations
 		return Stages(Conferences(conf).Stage);
 	)
 	pre conf in set dom Conferences;
-	
-	-- Schedule a workshop
-	public ScheduleWorkshop: Workshop`WorkshopName * Workshop`WorkshopSubject * Stage`StageName * Workshop`WorkshopCompany * Date * Time * Time * nat ==> ()
-	ScheduleWorkshop(name, subject, stage, company, date, startTime, endTime, vacancies) == (
- 		Workshops := Workshops ++ { name |-> new Workshop(name, subject, stage, company, date, startTime, endTime, vacancies) }
-	)
-	pre (
-	 	name not in set dom Workshops
-	 	and stage in set dom Stages
-	 	and date.IsLaterThan(Stages(stage).Start)
-	 	and date.IsEarlierThan(Stages(stage).End)
-	 	and Stages(stage).IsFree(date, startTime, endTime, Conferences, Workshops)
-	)
-	post name in set dom Workshops and card dom Workshops > card dom Workshops~;
-	
-	--Register attendee to one workshop
-	public RegisterAttendeeToWorkshop: User`UserName * Workshop`WorkshopName ==> ()
-	RegisterAttendeeToWorkshop(user, workshop) == (
-		Workshops(workshop).Attendees := Workshops(workshop).Attendees union { user }
-	)
-	pre (
-	 	card Workshops(workshop).Attendees < Workshops(workshop).Vacancies
-	 	and user not in set Workshops(workshop).Attendees
-	 	and user in set dom Attendees
-	 	and Attendees(user).State = <Registered>
-	)
-	post (
-	  user in set Workshops(workshop).Attendees
-	  and card Workshops(workshop).Attendees = card Workshops~(workshop).Attendees + 1 
-	);
 	
 	-- Retrieve all workshops
 	public GetAllWorkshops: () ==> set of Workshop
@@ -281,58 +339,11 @@ operations
    Workshops = Workshops~
    and RESULT = Workshops(workshop).Company
   );
-	
-	-- Publish a news arcticle about the event
-	public PublishNewsArcticle: User`UserName * News`NewsTitle * News`NewsContent ==> ()
-	PublishNewsArcticle(author, title, content) == (
-		News := News ++ { title |-> new News(author, title, content) }
-	)
-	pre (
-		author in set dom Attendees
-		and title not in set dom News
-	)
-	post title in set dom News and card dom News > card dom News~;
-	
-	-- Publish a news arcticle about a conference
-	public PublishNewsArcticleAboutConf: User`UserName * News`NewsTitle * News`NewsContent * Conference`ConfName ==> ()
-	PublishNewsArcticleAboutConf(author, title, content, conf) == (
-		News := News ++ { title |-> new News(author, title, content, conf) } 
-	)
-	pre (
-		author in set dom Attendees
-		and conf in set dom Conferences
-		and title not in set dom News
-	)
-	post title in set dom News and card dom News > card dom News~;
-	
-	-- Retrieve all news arcticles 
-	public GetAllNews: () ==> set of News
-	GetAllNews() == (
-		return rng News;
-	)
-	post (
-	 News = News~
-	 and RESULT = rng News
-	);
-	
-	-- Retrieve all news arcticles about a specific conference
-	public GetNewsAboutConf: Conference`ConfName ==> set of News
-	GetNewsAboutConf(conf) == (
-		return { news | news in set rng News & news.Conference = conf }; 
-	)
-	post (
-		News = News~
-		and RESULT = { news | news in set rng News & news.Conference = conf }
-	);
-	
-	-- Retrieve all news arcticles written by a specific author
-	public GetNewsByAuthor: User`UserName ==> set of News
-	GetNewsByAuthor(author) == (
-		return { news | news in set rng News & news.Author = author };
-	)
-	post (
-		News = News~
-		and RESULT = { news | news in set rng News & news.Author = author }
+  
+  -- Retrieve the account balance
+	public GetAccountBalance: () ==> int
+	GetAccountBalance() == (
+		return new Utils().SumSeq([t.Amount | t in seq Account]);
 	);
 	
 	-- Retrieve all the workshops taking place in a stage
@@ -383,5 +394,41 @@ operations
 	post (
 		Stages = Stages~
 		and RESULT = Venues(Stages(stage).Venue)
+	);
+	  
+	/*
+	 * The operations below relate to this requirement:
+	 * 
+	 * R07: Users should be able to read news articles about the event and the event’s conferences
+	 */
+	
+	-- Retrieve all news arcticles 
+	public GetAllNews: () ==> set of News
+	GetAllNews() == (
+		return rng News;
+	)
+	post (
+	 News = News~
+	 and RESULT = rng News
+	);
+	
+	-- Retrieve all news arcticles about a specific conference
+	public GetNewsAboutConf: Conference`ConfName ==> set of News
+	GetNewsAboutConf(conf) == (
+		return { news | news in set rng News & news.Conference = conf }; 
+	)
+	post (
+		News = News~
+		and RESULT = { news | news in set rng News & news.Conference = conf }
+	);
+	
+	-- Retrieve all news arcticles written by a specific author
+	public GetNewsByAuthor: User`UserName ==> set of News
+	GetNewsByAuthor(author) == (
+		return { news | news in set rng News & news.Author = author };
+	)
+	post (
+		News = News~
+		and RESULT = { news | news in set rng News & news.Author = author }
 	);
 end WebSummit

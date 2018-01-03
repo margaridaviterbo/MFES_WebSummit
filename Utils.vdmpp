@@ -1,3 +1,6 @@
+/*
+ * The Utils class provides miscellanious utilitary functions.
+ */
 class Utils
 operations
 	public SumSeq: seq of int ==> int

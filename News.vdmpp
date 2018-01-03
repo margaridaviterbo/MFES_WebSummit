@@ -1,3 +1,8 @@
+/*
+ * The purpose of the News class is to collect the information regarding a news article.
+ * More specifficaly, each article has an author, a title, content and may or may not
+ * be relative to a conference.
+ */
 class News
 types
 	public NewsTitle = seq1 of char;

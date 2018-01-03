@@ -1,3 +1,9 @@
+/*
+ * The purpose of the Venue class is to hold information about the venues where
+ * the event is taking place.
+ * Multiple venues can be booked for the event (for example Altice Arena and FIL) and
+ * each of them may be booked for specific dates. Venues are identified by their name.
+ */
 class Venue
 types
 	public VenueName = seq1 of char;
