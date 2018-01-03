@@ -322,19 +322,19 @@ public class WebSummitTest extends TestBase {
             ((News) Utils.get(WebSummit.News, "Title About Money Conf")).Content, "Content"));
   }
 
-  // TODO
+  // DONE
   public void TestGetAllNews() {
 
     AssertTrue(Utils.equals(WebSummit.GetAllNews().size(), 2L));
   }
 
-  // TODO
+  // DONE
   public void TestGetNewsAboutConf() {
 
     AssertTrue(Utils.equals(WebSummit.GetNewsAboutConf("Money Conf").size(), 1L));
   }
 
-  // TODO
+  // DONE
   public void TestGetNewsByAuthor() {
 
     AssertTrue(Utils.equals(WebSummit.GetNewsByAuthor("João Silva").size(), 2L));
