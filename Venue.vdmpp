@@ -25,14 +25,4 @@ operations
 		and endDate.IsLaterThan(startDate)
 	); 
 	
-	pure public IsFree: Date * Date * WebSummit`WSConferences ==> bool
-	IsFree(fromDate, toDate, conferences) == (
-		for all conference in set rng conferences do
-			if (
-				conference.Name = Name
-				and Date`DoOverlap(fromDate, toDate, conference.Start, conference.End) 
-			)
-			then return false;
-		return true;
-	);
 end Venue

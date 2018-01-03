@@ -205,9 +205,10 @@ operations
   -- Test retrieve all the talks given by a speaker
   public TestGetTalksOfSpeaker: () ==> ()
   TestGetTalksOfSpeaker() == (
-    AssertTrue(card WebSummit.GetTalksOfSpeaker("João Silva") = 1);
-    AssertTrue(card WebSummit.GetTalksOfSpeaker("Margarida Viterbo") = 1);
-    AssertTrue(card WebSummit.GetTalksOfSpeaker("Joana Viterbo") = 0);
+  	AssertTrue(card WebSummit.GetTalksOfSpeaker("João Silva") = 1);
+  	AssertTrue(card WebSummit.GetTalksOfSpeaker("Margarida Viterbo") = 1);
+  	AssertTrue(card WebSummit.GetTalksOfSpeaker("Joana Viterbo") = 0);
+  	AssertTrue(card WebSummit.GetTalksOfSpeaker("xptonull") = 0);
   );
   
   -- Test retrieve all the talks from a specific conference for a specific day
@@ -349,6 +350,49 @@ operations
 	 * by the operations pre-conditions and that the operations will fail accordingly.
 	 */
 	
+	-- Trying to sell a ticket that is out of stock
+	public TestSellOutOfStockTicket: () ==> ()
+	TestSellOutOfStockTicket() == (
+	   WebSummit.TicketStock := { <Company> |-> 100, <Attendee> |-> 0, <Volunteer> |-> 200 };
+	   WebSummit.SellTicket("Margarida Viterbo", <Attendee>);
+	);
+	
+	-- Trying to register an attendee already registered
+	public TestRegisterAttendeeAlreadyRegistered: () ==> ()
+	TestRegisterAttendeeAlreadyRegistered() == (
+	   WebSummit.SellTicket("João Silva", <Attendee>);
+	   WebSummit.RegisterAttendee("João Silva");
+     WebSummit.RegisterAttendee("João Silva");
+	);
+	
+	-- Trying to add an attendee as volunteer to waiting list
+	public TestAddAttendeeToVolunteerWaitingList: () ==> ()
+	TestAddAttendeeToVolunteerWaitingList() == (
+	   WebSummit.SellTicket("João Silva", <Attendee>);
+     WebSummit.RegisterAttendee("João Silva");
+     WebSummit.AddToWaitingList("João Silva");
+	);
+	
+	-- Trying to accept a volunteer that is not on the waiting list
+	public TestAddVolunteerNotInWaitingList: () ==> ()
+	TestAddVolunteerNotInWaitingList() == (
+	   WebSummit.AcceptVolunteer("Margarida Viterbo");
+	);
+	
+	-- Trying to add a stage to a venue that does not exist
+	public TestAddStageToNullVenue: () ==> ()
+	TestAddStageToNullVenue() == (
+	   WebSummit.AddStage("FIL 1", "Money Conf");
+	);
+	
+	-- Trying to add a stage that already exists to a venue
+	public TestAddRepeatedStageToVenue: () ==> ()
+	TestAddRepeatedStageToVenue() == (
+	   WebSummit.ScheduleVenue("FIL 1", new Date(4,11,2017), new Date(5,11,2017), 1000);
+	   WebSummit.AddStage("FIL 1", "Money Conf");
+	   WebSummit.AddStage("FIL 1", "Money Conf");
+	);
+	
 	-- Trying to schedule a venue with bad dates
 	public TestScheduleVenueBadDates: () ==> ()
 	TestScheduleVenueBadDates() == (
@@ -386,6 +430,154 @@ operations
   	WebSummit.ScheduleTalk("Future Societies", "Electric Cars: The Future",
   		"Margarida Viterbo", new Date(4,11,2017), new Time(16,55), new Time(17,15));
 	);
+	
+	-- Trying to schedule a talk to a conference thas does not exist
+	public TestScheduleTalkToNullConference: () ==> ()
+	TestScheduleTalkToNullConference() == (
+	   WebSummit.SellTicket("João Silva", <Attendee>);
+	   WebSummit.ScheduleTalk("Future Societies", "The City of the Future", 
+      "João Silva", new Date(4,11,2017), new Time(16,40), new Time(17,00));
+	);
+	
+	-- Trying to schedule a talk with a speaker that is not an attendee
+	public TestScheduleTalkWithNullSpeaker: () ==> ()
+	TestScheduleTalkWithNullSpeaker() == (
+	   WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017), 10000);
+     WebSummit.AddStage("MEO Arena", "Main Stage");
+     WebSummit.ScheduleConference("Main Stage", "Future Societies", new Date(4,11,2017), new Date(5,11,2017));
+     AssertTrue(WebSummit.Conferences("Future Societies").Stage = "Main Stage");
+     WebSummit.ScheduleTalk("Future Societies", "The City of the Future", 
+      "João Silva", new Date(4,11,2017), new Time(16,40), new Time(17,00));
+	);
+	
+	-- Trying to schedule talk to a conference to dates out of the conference dates
+	public TestScheduleTalkOutOfConferenceDates: () ==> ()
+	TestScheduleTalkOutOfConferenceDates() == (
+	   WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017), 10000);
+     WebSummit.AddStage("MEO Arena", "Main Stage");
+     WebSummit.ScheduleConference("Main Stage", "Future Societies", new Date(4,11,2017), new Date(5,11,2017));
+     AssertTrue(WebSummit.Conferences("Future Societies").Stage = "Main Stage");
+     WebSummit.SellTicket("João Silva", <Attendee>);
+     WebSummit.ScheduleTalk("Future Societies", "The City of the Future", 
+      "João Silva", new Date(6,11,2017), new Time(16,40), new Time(17,00));
+	);
+	
+	-- Trying to get the stage where a conference that does not exist is taking place
+	public TestGetStageOfNullConf: () ==> (Stage)
+	TestGetStageOfNullConf() == (
+	   WebSummit.GetConferenceStage("Robots will end Human Race");
+	);
+	
+	-- Trying to schedule a workshop that already exists
+	public TestScheduleRepeatedWorkshops: () ==> ()
+	TestScheduleRepeatedWorkshops() == (
+	   WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017), 10000);
+     WebSummit.AddStage("MEO Arena", "Main Stage");
+     WebSummit.ScheduleWorkshop("Do More", "Management", "Main Stage", "Do It", 
+      new Date(4,11,2017), new Time(16,40), new Time(17,00), 10);
+     WebSummit.ScheduleWorkshop("Do More", "Management", "Main Stage", "Do It", 
+      new Date(4,11,2017), new Time(17,10), new Time(17,30), 10);
+	);
+	
+	-- Trying to schedule a workshop to a stage that does not exist
+	public TestScheduleWorkshopToNullStage: () ==> ()
+	TestScheduleWorkshopToNullStage() == (
+	   WebSummit.ScheduleWorkshop("Do More", "Management", "Main Stage", "Do It", 
+      new Date(4,11,2017), new Time(16,40), new Time(17,00), 10);
+	);
+	
+	-- Trying to schedule a workshop to a date outside the stage date
+	public TestScheduleWorkshopToClosedStage: () ==> ()
+	TestScheduleWorkshopToClosedStage() == (
+	   WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017), 10000);
+     WebSummit.AddStage("MEO Arena", "Main Stage");
+     WebSummit.ScheduleWorkshop("Do More", "Management", "Main Stage", "Do It", 
+      new Date(3,11,2017), new Time(16,40), new Time(17,00), 10);
+	);
+	
+	-- Trying to schedule a workshop to a stage not free
+	public TestScheduleWorkshopToOccupiedStage: () ==> ()
+	TestScheduleWorkshopToOccupiedStage() == (
+	   WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017), 10000);
+     WebSummit.AddStage("MEO Arena", "Main Stage");
+     WebSummit.ScheduleWorkshop("Do More", "Management", "Main Stage", "Do It", 
+      new Date(4,11,2017), new Time(16,40), new Time(17,00), 10);
+     WebSummit.ScheduleWorkshop("Do ", "Management", "Main Stage", "Do It", 
+      new Date(4,11,2017), new Time(16,50), new Time(17,10), 10);
+	); 
+	
+	-- Trying to register attendee to full workshop
+	public TestRegistereAttendeeToFullWorkshop: () ==> ()
+	TestRegistereAttendeeToFullWorkshop() == (
+	   WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017), 10000);
+     WebSummit.AddStage("MEO Arena", "Main Stage");
+     WebSummit.ScheduleWorkshop("Do More", "Management", "Main Stage", "Do It", 
+      new Date(4,11,2017), new Time(16,40), new Time(17,00), 1);
+     WebSummit.SellTicket("João Silva", <Attendee>);
+     WebSummit.SellTicket("Margarida Viterbo", <Attendee>);
+     WebSummit.RegisterAttendee("João Silva");
+     WebSummit.RegisterAttendee("Margarida Viterbo");
+     WebSummit.RegisterAttendeeToWorkshop("Margarida Viterbo", "Do More");
+     WebSummit.RegisterAttendeeToWorkshop("João Silva", "Do More");
+	);
+	
+	-- Trying to register attendee to wokshop to which his already registered
+	public TestRegisterSameAttendeeToWorkshop: () ==> ()
+	TestRegisterSameAttendeeToWorkshop() == (
+	   WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017), 10000);
+     WebSummit.AddStage("MEO Arena", "Main Stage");
+     WebSummit.ScheduleWorkshop("Do More", "Management", "Main Stage", "Do It", 
+      new Date(4,11,2017), new Time(16,40), new Time(17,00), 2);
+     WebSummit.SellTicket("Margarida Viterbo", <Attendee>);
+     WebSummit.RegisterAttendee("Margarida Viterbo");
+     WebSummit.RegisterAttendeeToWorkshop("Margarida Viterbo", "Do More");
+     WebSummit.RegisterAttendeeToWorkshop("Margarida Viterbo", "Do More");
+	);
+	
+	-- Trying to register null attendee to workshop
+	public TestRegisterNullAttendeeToWorkshop: () ==> ()
+	TestRegisterNullAttendeeToWorkshop() == (
+	   WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017), 10000);
+     WebSummit.AddStage("MEO Arena", "Main Stage");
+     WebSummit.ScheduleWorkshop("Do More", "Management", "Main Stage", "Do It", 
+      new Date(4,11,2017), new Time(16,40), new Time(17,00), 2);
+     WebSummit.RegisterAttendeeToWorkshop("Margarida Viterbo", "Do More");
+	);
+	
+	-- Trying to register an attendee that is not registered in websummit to workshop
+	public TestRegisterNonRegisteredAttendeeToWorkshop: () ==> ()
+	TestRegisterNonRegisteredAttendeeToWorkshop() == (
+	 WebSummit.ScheduleVenue("MEO Arena", new Date(4,11,2017), new Date(9,11,2017), 10000);
+     WebSummit.AddStage("MEO Arena", "Main Stage");
+     WebSummit.ScheduleWorkshop("Do More", "Management", "Main Stage", "Do It", 
+      new Date(4,11,2017), new Time(16,40), new Time(17,00), 2);
+     WebSummit.SellTicket("Margarida Viterbo", <Attendee>);
+     WebSummit.RegisterAttendeeToWorkshop("Margarida Viterbo", "Do More");
+	);
+	
+	-- Trying to get all attendees of null workshop
+	public TestGetAttendeesOfNullWorkshop: () ==> (set of User`UserName)
+	TestGetAttendeesOfNullWorkshop() == (
+	   WebSummit.GetAttendeesOfWorkshop("Cooking");
+	);
+	
+	-- Trying to get stage of null workshop
+  public TestGetStageOfNullWorkshop: () ==> (Stage)
+  TestGetStageOfNullWorkshop() == (
+     WebSummit.GetStageOfWorkshop("Cooking");
+  );
+  
+  -- Trying to get subject of null workshop
+  public TestGetSubjectOfNullWorkshop: () ==> (Workshop`WorkshopSubject)
+  TestGetSubjectOfNullWorkshop() == (
+     WebSummit.GetSubjectOfWorkshop("Cooking");
+  );
+  
+  -- Trying to get company of null workshop
+  public TestGetCompanyOfNullWorkshop: () ==> (Workshop`WorkshopCompany)
+  TestGetCompanyOfNullWorkshop() == (
+     WebSummit.GetCompanyOfWorkshop("Cooking");
+  );
 	
 	-- Trying to publish a news article with a bad author
 	public TestPublishNewsArticleBadAuthor: () ==> ()

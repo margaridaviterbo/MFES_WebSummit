@@ -21,7 +21,7 @@ instance variables
 	private Account : WSAccount := [];
 	public WaitingList : WSWaitingList := {};
 	public Attendees : WSAttendees := { |-> };
-	private TicketStock : WSTicketStock;
+	public TicketStock : WSTicketStock;
 	private TicketPrice : WSTicketPrice;
 	public Conferences : WSConferences := { |-> };
 	public Workshops : WSWorkshops := { |-> };
