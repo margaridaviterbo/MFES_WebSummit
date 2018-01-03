@@ -299,6 +299,12 @@ operations
     AssertTrue(card WebSummit.GetNewsByAuthor("João Silva") = 2);
   );
   
+  /* 
+   * Test are not necessarily ran in the order of the requirements
+   * but instead in accord with the pre-requisites of the test cases that
+   * follow them. Obviously this will match pretty closely with the actual
+   * order of the requirements, but we feel that an explanation is in order here.
+   */
 	public Run: () ==> ()
 	Run() == (
 		TestSellTicket();
@@ -336,7 +342,12 @@ operations
 		TestGetNewsByAuthor();
 	);
 		
-	-- Failing tests; run one at a time --
+	/* 
+	 * Failing tests. Must be ran one at a time.
+	 * 
+	 * The purpose of the following test cases is to ensure that bad inputs will be caught
+	 * by the operations pre-conditions and that the operations will fail accordingly.
+	 */
 	
 	-- Trying to schedule a venue with bad dates
 	public TestScheduleVenueBadDates: () ==> ()
