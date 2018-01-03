@@ -1,3 +1,9 @@
+/*
+ * The Stage class represents a stage, on which a conference or workshop may be held. 
+ * Stages may only be available during part of the event, meaning that events that wish
+ * to use the stage must take in consideration the stage availability. Additionaly, stages
+ * are identified by name and are associated to a venue.
+ */
 class Stage
 types
 	public StageName = seq1 of char;

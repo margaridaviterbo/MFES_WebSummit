@@ -1,3 +1,11 @@
+/*
+ * The conference class represents a collection of talks around the same theme.
+ * During the event there can be multiple conferences, some of them even happening
+ * at the same time.
+ *
+ * A conference may happen only during some of the days of the event. Additionaly,
+ * you can't have the same conference in multiple stages.
+ */
 class Conference
 types
   public ConfName = seq1 of char;

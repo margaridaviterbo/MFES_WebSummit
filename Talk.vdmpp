@@ -1,3 +1,8 @@
+/*
+ * The Talk class represents a talk given during a conference.
+ * Talks are identified by their titles, and happen during a short period of time. Talks are also given
+ * by a speaker, that must be among the attendees of the event.
+ */
 class Talk
 types
 	public TalkTitle = seq1 of char;

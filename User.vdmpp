@@ -1,3 +1,8 @@
+/*
+ * The User class represents a (potential) attendee of the event.
+ * It maintains information about the attendee such as the type of the ticket,
+ * it's state and their name.
+ */
 class User
 types
 	public UserName = seq1 of char;

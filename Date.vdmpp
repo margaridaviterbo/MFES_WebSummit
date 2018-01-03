@@ -1,3 +1,8 @@
+/*
+ * Date is a utility class to represent a specific date.
+ * Some utility methods are also provided to aid with date comparison for the
+ * purpose of allocating dates for the event's conferences and workshops.
+ */
 class Date
 instance variables
 	public Day: nat1;

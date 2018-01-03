@@ -1,3 +1,7 @@
+/*
+ * TestBase is the base class for the other test classes.
+ * It provides helper functions to aid with testing.
+ */ 
 class TestBase
 operations
 	protected AssertTrue: bool ==> ()

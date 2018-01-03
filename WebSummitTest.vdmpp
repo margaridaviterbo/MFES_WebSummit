@@ -1,3 +1,10 @@
+/*
+ * The WebSummitTest class is a test class meant to thoroughly test the operations
+ * defined in the WebSummit class. It contains both "happy path" tests, that ensure
+ * that the operations execute as desired for friendly inputs, and failure tests that
+ * ensure that given bad input (such as input that violates the preconditions) the 
+ * operations fail.
+ */
 class WebSummitTest is subclass of TestBase
 instance variables
 	private TicketStock : WebSummit`WSTicketStock := { <Company> |-> 100, <Attendee> |-> 1000, <Volunteer> |-> 200 };
