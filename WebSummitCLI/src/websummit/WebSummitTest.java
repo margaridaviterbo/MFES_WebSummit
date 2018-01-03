@@ -121,7 +121,7 @@ public class WebSummitTest extends TestBase {
     AssertTrue(Utils.equals(WebSummit.GetConferencesInStage("Main Stage").size(), 2L));
   }
 
-  // TODO
+  // DONE
   public void TestGetConferencesInStageOfDay() {
 
     AssertTrue(
@@ -257,7 +257,7 @@ public class WebSummitTest extends TestBase {
             ((Workshop) Utils.get(WebSummit.Workshops, "Managing DBs")).Attendees));
   }
 
-  // TODO
+  // DONE
   public void TestGetAttendeesOfWorkshop() {
 
     AssertTrue(Utils.equals(WebSummit.GetAttendeesOfWorkshop("Managing DBs").size(), 1L));
